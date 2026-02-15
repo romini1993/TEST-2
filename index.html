@@ -38,16 +38,8 @@
         .source-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px; }
         .source-label { font-size: 13px; font-weight: bold; color: var(--text); width: 100px; flex-shrink: 0; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
         
-        /* --- KODE ANTI-SEGITIGA (SPIN BUTTONS) --- */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-        /* ----------------------------------------- */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
 
         .source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 6px; padding: 6px 10px; font-size: 13px; outline: none; }
         .edit-src { color: var(--accent); font-size: 10px; margin-left: 5px; display: inline-flex; align-items: center; }
@@ -132,7 +124,21 @@
     let currentMode = 'restore';
     const LOGO_CACHE = 'porto-logo-cache-v1';
 
-    const exchangeLogos = { "BINANCE": "https://bin.bnbstatic.com/static/images/common/favicon.ico", "BYBIT": "https://www.bybit.com/favicon.ico", "OKX": "https://www.okx.com/favicon.ico", "GATE": "https://www.gate.io/favicon.ico", "TOKOCRYPTO": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/1043.png", "INDODAX": "https://indodax.com/favicon.ico", "PINTU": "https://pintu.co.id/favicon.ico", "MEXC": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/544.png", "KUCOIN": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/311.png", "BITMART": "https://www.bitmart.com/favicon.ico", "BITGET": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/513.png", "COINBASE": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/89.png" };
+    // Link Exchange diperbaiki biar muncul semua
+    const exchangeLogos = { 
+        "BINANCE": "https://gfa.altcoin-faucets.com/img/exchanges/binance.png", 
+        "BYBIT": "https://gfa.altcoin-faucets.com/img/exchanges/bybit.png", 
+        "OKX": "https://gfa.altcoin-faucets.com/img/exchanges/okx.png", 
+        "GATE": "https://gfa.altcoin-faucets.com/img/exchanges/gate.png", 
+        "TOKOCRYPTO": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/1043.png", 
+        "INDODAX": "https://gfa.altcoin-faucets.com/img/exchanges/indodax.png", 
+        "PINTU": "https://gfa.altcoin-faucets.com/img/exchanges/pintu.png", 
+        "MEXC": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/544.png", 
+        "KUCOIN": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/311.png", 
+        "BITMART": "https://gfa.altcoin-faucets.com/img/exchanges/bitmart.png", 
+        "BITGET": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/513.png", 
+        "COINBASE": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/89.png" 
+    };
 
     window.onload = () => {
         document.getElementById('sort-order').value = localStorage.getItem('last_sort') || 'manual';
@@ -191,7 +197,6 @@
 
         const cache = await caches.open(LOGO_CACHE);
         const cachedResponse = await cache.match(url);
-
         if (cachedResponse) {
             const blob = await cachedResponse.blob();
             imgElement.src = URL.createObjectURL(blob);
@@ -206,14 +211,17 @@
                 imgElement.src = URL.createObjectURL(blob);
             } else { throw new Error(); }
         } catch (e) {
-            // Jika fetch gagal, coba fallback internal atau teks
-            if (type === 'coin') {
-                imgElement.src = `https://assets.coincap.io/assets/icons/${symbol.toLowerCase()}@2x.png`;
-                imgElement.onerror = () => { imgElement.parentElement.innerHTML = `<div class="logo-initial">${symbol.substring(0, 2)}</div>`; };
-            } else {
-                imgElement.parentElement.innerHTML = `<div class="logo-initial">${symbol.substring(0, 2)}</div>`;
-            }
+            imgElement.src = url; // Fallback langsung ke URL jika fetch gagal
+            imgElement.onerror = () => { imgElement.parentElement.innerHTML = `<div class="logo-initial">${symbol.substring(0, 2)}</div>`; };
         }
+    }
+
+    function handleLogoError(img, sym) {
+        if(sym === 'IDR') { img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">Rp</div>`; return; }
+        const retry = parseInt(img.getAttribute('data-retry') || "0");
+        const srcArr = [`https://assets.coincap.io/assets/icons/${sym.toLowerCase()}@2x.png`, `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${sym.toLowerCase()}.png` ];
+        if (retry < srcArr.length) { img.setAttribute('data-retry', retry + 1); img.src = srcArr[retry]; } 
+        else { const container = img.parentElement; if (container) container.innerHTML = `<div class="logo-initial">${sym.substring(0, 2)}</div>`; }
     }
 
     function getCoinTotal(sym) { let t = 0; (coinSources[sym] || []).forEach(src => t += parseFloat(balances[sym]?.[src] || 0)); return t; }
@@ -250,6 +258,7 @@
         document.getElementById('total-all-usd').innerText = `$${totalAllUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     }
 
+    // --- RENDERLIST SESUAI CHECKPOINT ASLI (Hanya disisipkan setLogo) ---
     function renderList() {
         const list = document.getElementById('main-list');
         const query = document.getElementById('filter-input').value.toUpperCase();
@@ -263,10 +272,7 @@
             if (sortType === 'name') exArr.sort((a, b) => a.name.localeCompare(b.name));
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
             exArr.forEach(ex => {
-                const row = document.createElement('div');
-                row.className = 'coin-row';
-                row.innerHTML = `<div class="coin-card" onclick="toggleDetail('${ex.name}')"><div class="logo-wrapper" style="background:#fff"><img id="img-ex-${ex.name}" src=""></div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:15px;">-</span></div></div><span class="delete-coin" onclick="removeExchange('${ex.name}')">×</span><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><div class="logo-wrapper" style="width:28px; height:28px;"><img id="img-det-${ex.name}-${s}" src=""></div><div style="width: 50px;"><div style="font-size:13px; font-weight:bold">${s}</div></div><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div>`;
-                list.appendChild(row);
+                list.innerHTML += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${ex.name}')"><div class="logo-wrapper" style="background:#fff"><img id="img-ex-${ex.name}" src=""></div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:15px;">-</span></div></div><span class="delete-coin" onclick="removeExchange('${ex.name}')">×</span><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><div class="logo-wrapper" style="width:28px; height:28px;"><img id="img-det-${ex.name}-${s}" src="" onerror="handleLogoError(this, '${s}')"></div><div style="width: 50px;"><div style="font-size:13px; font-weight:bold">${s}</div></div><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
                 setLogo(document.getElementById(`img-ex-${ex.name}`), ex.name, 'exchange');
                 watchlist.filter(s => coinSources[s]?.includes(ex.name)).forEach(s => {
                     setLogo(document.getElementById(`img-det-${ex.name}-${s}`), s, 'coin');
@@ -277,10 +283,7 @@
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             filtered.forEach(s => {
-                const row = document.createElement('div');
-                row.className = 'coin-row';
-                row.innerHTML = `<div class="coin-card" onclick="toggleDetail('${s}')"><div class="logo-wrapper"><img id="img-coin-${s}" src=""></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:11px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:15px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div></div><span class="delete-coin" onclick="removeCoin('${s}')">×</span><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label" onclick="renameSource('${s}', '${src}')">${src} <span class="edit-src">✎</span></span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama source baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div>`;
-                list.appendChild(row);
+                list.innerHTML += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${s}')"><div class="logo-wrapper"><img id="img-coin-${s}" src="" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:11px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:15px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div></div><span class="delete-coin" onclick="removeCoin('${s}')">×</span><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label" onclick="renameSource('${s}', '${src}')">${src} <span class="edit-src">✎</span></span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama source baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
                 setLogo(document.getElementById(`img-coin-${s}`), s, 'coin');
             });
         }
@@ -326,7 +329,7 @@
     function removeSource(s, src) { if(confirm(`Hapus ${src}?`)) { coinSources[s] = coinSources[s].filter(i => i !== src); saveAll(); renderList(); } }
     function renameSource(s, old) { const v = prompt(`Ubah "${old}":`, old); if(v && v.trim() !== "" && v !== old) { const n = toProperCase(v.trim()); const idx = coinSources[s].indexOf(old); if(idx>-1) coinSources[s][idx]=n; if(balances[s] && balances[s][old]!==undefined) { balances[s][n]=balances[s][old]; delete balances[s][old]; } saveAll(); renderList(); } }
     function showToast(m) { const x = document.getElementById("toast-msg"); x.innerText = m; x.className = "show"; setTimeout(() => x.className = "", 3000); }
-    function resetApp() { if(confirm("Hapus total semua data?")) { localStorage.clear(); caches.delete(LOGO_CACHE); location.reload(); } }
+    function resetApp() { if(confirm("Hapus total semua data?")) { localStorage.clear(); location.reload(); } }
     
     function exportData() {
         const data = { assets: watchlist, balances: balances, sources: coinSources, exchanges: allExchanges };
@@ -348,7 +351,10 @@
         reader.onload = (f) => {
             try {
                 let d = JSON.parse(f.target.result);
-                if (currentMode === 'restore') { watchlist = d.assets || []; balances = d.balances || {}; coinSources = d.sources || {}; allExchanges = d.exchanges || []; } 
+                if (currentMode === 'restore') { 
+                    if(!confirm("Restore akan MENGHAPUS data saat ini. Lanjut?")) return;
+                    watchlist = d.assets || []; balances = d.balances || {}; coinSources = d.sources || {}; allExchanges = d.exchanges || []; 
+                } 
                 else {
                     if(d.assets) d.assets.forEach(s => { if(!watchlist.includes(s)) watchlist.push(s); });
                     if(d.exchanges) d.exchanges.forEach(ex => { if(!allExchanges.includes(ex)) allExchanges.push(ex); });
