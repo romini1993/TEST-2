@@ -264,7 +264,6 @@
         document.getElementById('total-all-usd').innerText = `$${totalAllUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     }
 
-    // LONG PRESS LOGIC FOR BOTH PC & MOBILE
     function handleTouchStart(e, id, type) { isMoving = false; isLongPressActive = false; touchStartY = e.touches ? e.touches[0].pageY : e.pageY; longPressTimer = setTimeout(() => { if(!isMoving) { isLongPressActive = true; openDeleteModal(id, type); } }, 800); }
     function handleMouseDown(e, id, type) { if (e.button !== 0) return; isMoving = false; isLongPressActive = false; longPressTimer = setTimeout(() => { isLongPressActive = true; openDeleteModal(id, type); }, 800); }
     function handleMouseUp() { clearTimeout(longPressTimer); }
@@ -363,18 +362,31 @@
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${finalName}.json`; a.click();
     }
 
-    function openFilePicker(mode) { currentMode = mode; document.getElementById('importFile').click(); }
+    function openFilePicker(mode) { currentMode = mode; document.getElementById('importFile').value = ""; document.getElementById('importFile').click(); }
     function handleFileSelect(e) {
         const file = e.target.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = (f) => {
             try {
                 let d = JSON.parse(f.target.result);
-                if(d.assets) d.assets = d.assets.map(s => s.toUpperCase());
-                if(d.exchanges) d.exchanges = d.exchanges.map(ex => ex.toUpperCase());
-                if (currentMode === 'restore') { if(!confirm("Restore data sekarang?")) return; watchlist = d.assets || []; balances = d.balances || {}; coinSources = d.sources || {}; allExchanges = d.exchanges || []; } 
-                else { if(!confirm("Import dan gabungkan data?")) return; }
-                migrateToUppercase(); saveAll(); location.reload();
+                if (currentMode === 'restore') {
+                    if(!confirm("Restore data sekarang?")) return;
+                    watchlist = d.assets || []; balances = d.balances || {}; 
+                    coinSources = d.sources || {}; allExchanges = d.exchanges || [];
+                } else {
+                    if(!confirm("Import dan gabungkan data?")) return;
+                    (d.assets || []).forEach(s => { if(!watchlist.includes(s)) watchlist.push(s); });
+                    (d.exchanges || []).forEach(ex => { if(!allExchanges.includes(ex)) allExchanges.push(ex); });
+                    for(let s in d.sources) { 
+                        if(!coinSources[s]) coinSources[s] = [];
+                        d.sources[s].forEach(src => { if(!coinSources[s].includes(src)) coinSources[s].push(src); });
+                    }
+                    for(let s in d.balances) {
+                        if(!balances[s]) balances[s] = {};
+                        for(let src in d.balances[s]) { balances[s][src] = d.balances[s][src]; }
+                    }
+                }
+                saveAll(); location.reload();
             } catch (err) { showToast("File gak valid!"); }
         };
         reader.readAsText(file);
