@@ -124,14 +124,14 @@
     let expandedItem = null;
     let currentMode = 'restore';
 
-    // FIX: Logo sesuai permintaan elu Bro
+    // FIX: Logo sesuai permintaan elu Bro (Gua rapihin bagian ini aja)
     const exchangeLogos = { 
         "BINANCE": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png", 
         "BYBIT": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/521.png", 
         "OKX": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/294.png", 
         "GATE": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/302.png", 
-        "TOKOCRYPTO": "https://s2.coinmarketcap.com/static/img/coins/64x64/6824.png", 
-        "INDODAX": "https://s2.coinmarketcap.com/static/img/coins/64x64/4056.png", 
+        "TOKOCRYPTO": "https://raw.githubusercontent.com/Pintu-Crypto-Aset/pintu-favicon/main/tokocrypto.png", 
+        "INDODAX": "https://raw.githubusercontent.com/Pintu-Crypto-Aset/pintu-favicon/main/indodax.png", 
         "PINTU": "https://pintu.co.id/favicon.ico", 
         "MEXC": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/544.png", 
         "KUCOIN": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/311.png", 
@@ -228,7 +228,7 @@
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
             exArr.forEach(ex => {
                 const logo = exchangeLogos[ex.name.toUpperCase()] || "";
-                html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${ex.name}')"><div class="logo-wrapper" style="background:#fff">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:15px;">-</span></div></div><span class="delete-coin" onclick="removeExchange('${ex.name}')">×</span><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><div class="logo-wrapper" style="width:28px; height:28px;"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div style="width: 50px;"><div style="font-size:13px; font-weight:bold">${s}</div></div><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${ex.name}')"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:15px;">-</span></div></div><span class="delete-coin" onclick="removeExchange('${ex.name}')">×</span><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><div class="logo-wrapper" style="width:28px; height:28px;"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div style="width: 50px;"><div style="font-size:13px; font-weight:bold">${s}</div></div><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
             });
         } else {
             let filtered = watchlist.filter(s => s.toUpperCase().includes(query));
