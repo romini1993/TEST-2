@@ -123,7 +123,7 @@
     let expandedItem = null;
     let currentMode = 'restore';
 
-    // FIX: Link Gambar Exchange yang lebih stabil
+    // FIX: Link Gambar Exchange sesuai permintaan
     const exchangeLogos = { 
         "BINANCE": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png", 
         "BYBIT": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/521.png", 
@@ -131,7 +131,7 @@
         "GATE": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/302.png", 
         "TOKOCRYPTO": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/1043.png", 
         "INDODAX": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/283.png", 
-        "PINTU": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/1215.png", 
+        "PINTU": "https://pintu.co.id/favicon.ico", 
         "MEXC": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/544.png", 
         "KUCOIN": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/311.png", 
         "BITMART": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/414.png", 
@@ -181,7 +181,6 @@
         isFetching = false;
     }
 
-    // --- FUNGSI GAMBAR STABIL ---
     function handleLogoError(img, sym) {
         if(sym === 'IDR') { img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">Rp</div>`; return; }
         const retry = parseInt(img.getAttribute('data-retry') || "0");
@@ -231,7 +230,6 @@
         document.getElementById('total-all-usd').innerText = `$${totalAllUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     }
 
-    // --- RENDERLIST ASLI (NO KEDIP) ---
     function renderList() {
         const list = document.getElementById('main-list');
         const query = document.getElementById('filter-input').value.toUpperCase();
@@ -270,8 +268,15 @@
     function handleGlobalAdd() {
         const input = document.getElementById('global-add-input');
         const v = input.value.trim(); if(!v) return;
-        if(currentTab === 'exchange') { const name = toProperCase(v); if(!allExchanges.includes(name)) { allExchanges.push(name); saveAll(); input.value = ""; renderList(); } }
-        else { const sym = v.toUpperCase(); if(!watchlist.includes(sym)) { watchlist.push(sym); coinSources[sym] = []; saveAll(); input.value = ""; fetchAll(); } }
+        if(currentTab === 'exchange') { 
+            const name = toProperCase(v); 
+            if(!allExchanges.includes(name)) { allExchanges.push(name); saveAll(); input.value = ""; renderList(); }
+            else { showToast(`Exchange ${name} udah ada!`); }
+        } else { 
+            const sym = v.toUpperCase(); 
+            if(!watchlist.includes(sym)) { watchlist.push(sym); coinSources[sym] = []; saveAll(); input.value = ""; fetchAll(); }
+            else { showToast(`Koin ${sym} udah ada!`); }
+        }
     }
 
     function addCoinToExchange(ex) { 
@@ -281,7 +286,7 @@
             if(!watchlist.includes(s)) { watchlist.push(s); coinSources[s]=[]; } 
             if(!coinSources[s].includes(ex)) { 
                 coinSources[s].push(ex); saveAll(); input.value=""; renderList(); fetchAll(); 
-            } else { showToast("Koin udah ada!"); }
+            } else { showToast("Koin udah ada di exchange ini!"); }
         } 
     }
 
@@ -328,6 +333,7 @@
                     if(!confirm("Restore akan MENGHAPUS data saat ini. Lanjut?")) return;
                     watchlist = d.assets || []; balances = d.balances || {}; coinSources = d.sources || {}; allExchanges = d.exchanges || []; 
                 } else {
+                    if(!confirm("Import akan MENGGABUNGKAN data file dengan data saat ini. Lanjut?")) return;
                     if(d.assets) d.assets.forEach(s => { if(!watchlist.includes(s)) watchlist.push(s); });
                     if(d.exchanges) d.exchanges.forEach(ex => { if(!allExchanges.includes(ex)) allExchanges.push(ex); });
                     for(let coin in d.sources) { if(!coinSources[coin]) coinSources[coin] = []; d.sources[coin].forEach(src => { if(!coinSources[coin].includes(src)) coinSources[coin].push(src); }); }
