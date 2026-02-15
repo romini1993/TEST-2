@@ -23,11 +23,14 @@
         #total-all-usd { color: var(--subtext); font-size: 12px; }
 
         .tab-container { display: flex; gap: 8px; margin-bottom: 10px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px; border: 1px solid #334155; }
-        .tab-btn { flex: 1; padding: 8px; border-radius: 6px; border: none; background: transparent; color: var(--subtext); cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.3s; text-transform: uppercase; }
+        .tab-btn { flex: 1; padding: 8px; border-radius: 6px; border: none; background: transparent; color: var(--subtext); cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.3s; }
         .tab-btn.active { background: var(--accent); color: #0f172a; }
+        
+        /* Input filter tetep kapital biar gampang cari koin */
         .filter-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px; color: white; outline: none; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; }
+        
         .control-row { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 5px; }
-        .control-select { background: var(--card); color: white; border: 1px solid #334155; border-radius: 6px; font-size: 10px; padding: 6px; outline: none; cursor: pointer; flex: 1; text-transform: uppercase; }
+        .control-select { background: var(--card); color: white; border: 1px solid #334155; border-radius: 6px; font-size: 10px; padding: 6px; outline: none; cursor: pointer; flex: 1; }
 
         #main-list { flex: 1; overflow-y: auto; padding: 5px 10px; scrollbar-width: none; }
         #main-list::-webkit-scrollbar { display: none; }
@@ -46,9 +49,9 @@
         
         .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: var(--card); border: 1px solid var(--accent); border-radius: 15px; padding: 20px; width: 100%; max-width: 300px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--text); text-transform: uppercase; }
+        .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--text); }
         .modal-btn-row { display: flex; gap: 10px; }
-        .modal-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 13px; text-transform: uppercase; }
+        .modal-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 13px; }
         .btn-cancel { background: #334155; color: white; }
         .btn-delete { background: var(--down); color: white; }
 
@@ -63,11 +66,11 @@
         .new-source-btn { background: #334155; color: var(--accent); border: none; border-radius: 5px; padding: 0 12px; font-weight: bold; cursor: pointer; font-size: 13px; }
         .search-box { display: flex; gap: 6px; margin-bottom: 10px; }
         .search-box input { flex: 1; background: var(--card); border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; outline: none; font-size: 13px; text-transform: uppercase; }
-        .add-btn { background: var(--accent); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; color: #0f172a; text-transform: uppercase; }
+        .add-btn { background: var(--accent); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; color: #0f172a; }
         .backup-section { display: flex; flex-wrap: wrap; gap: 6px; }
-        .backup-btn { flex: 1 1 calc(50% - 3px); background: transparent; border: 1px solid #334155; color: var(--subtext); padding: 8px; border-radius: 6px; font-size: 10px; cursor: pointer; text-align: center; text-transform: uppercase; }
+        .backup-btn { flex: 1 1 calc(50% - 3px); background: transparent; border: 1px solid #334155; color: var(--subtext); padding: 8px; border-radius: 6px; font-size: 10px; cursor: pointer; text-align: center; }
         .import-btn-full { flex: 1 1 100% !important; margin-top: 2px; border: 1px solid var(--accent) !important; color: var(--accent) !important; }
-        #toast-msg { visibility: hidden; min-width: 180px; background-color: #f87171; color: #fff; text-align: center; border-radius: 8px; padding: 8px; position: fixed; z-index: 1000; bottom: 100px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); text-transform: uppercase; }
+        #toast-msg { visibility: hidden; min-width: 180px; background-color: #f87171; color: #fff; text-align: center; border-radius: 8px; padding: 8px; position: fixed; z-index: 1000; bottom: 100px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         #toast-msg.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 70px; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 70px; opacity: 0;} }
@@ -82,38 +85,38 @@
         </div>
         <div class="summary-card">
             <span style="font-size: 9px; color: var(--accent); letter-spacing: 1px;">TOTAL SALDO</span>
-            <span id="total-all-idr" class="summary-idr">RP 0</span>
+            <span id="total-all-idr" class="summary-idr">Rp 0</span>
             <span id="total-all-usd">$0.00</span>
         </div>
         <div class="tab-container">
-            <button id="tab-ex" class="tab-btn active" onclick="switchTab('exchange')">EXCHANGE</button>
-            <button id="tab-coin" class="tab-btn" onclick="switchTab('coin')">COIN</button>
+            <button id="tab-ex" class="tab-btn active" onclick="switchTab('exchange')">Exchange</button>
+            <button id="tab-coin" class="tab-btn" onclick="switchTab('coin')">Coin</button>
         </div>
         <input type="text" id="filter-input" class="filter-input" placeholder="CARI..." oninput="renderList()">
         <div class="control-row">
             <select id="sort-order" class="control-select" onchange="updateSettings()">
-                <option value="manual">URUTAN: DEFAULT</option>
-                <option value="name">URUTAN: A-Z</option>
-                <option value="value">URUTAN: TERBESAR</option>
+                <option value="manual">Urutan: Default</option>
+                <option value="name">Urutan: A-Z</option>
+                <option value="value">Urutan: Terbesar</option>
             </select>
             <select id="currency-view" class="control-select" onchange="updateSettings()">
-                <option value="IDR">MATA UANG: IDR</option>
-                <option value="USD">MATA UANG: USD</option>
+                <option value="IDR">Mata Uang: IDR</option>
+                <option value="USD">Mata Uang: USD</option>
             </select>
         </div>
     </div>
     <div id="main-list"></div>
     <div class="bottom-section">
         <div class="search-box">
-            <input type="text" id="global-add-input" placeholder="TAMBAH BARU..." onkeypress="if(event.key==='Enter') handleGlobalAdd()">
-            <button class="add-btn" onclick="handleGlobalAdd()">TAMBAH</button>
+            <input type="text" id="global-add-input" placeholder="Tambah Baru..." onkeypress="if(event.key==='Enter') handleGlobalAdd()">
+            <button class="add-btn" onclick="handleGlobalAdd()">Tambah</button>
         </div>
         <div class="backup-section">
-            <button class="backup-btn" onclick="exportData()">📤 BACKUP</button>
-            <button class="backup-btn" onclick="openFilePicker('restore')">🔄 RESTORE</button>
-            <button class="backup-btn" onclick="exportToExcel()">📊 EXCEL</button>
-            <button class="backup-btn" onclick="resetApp()" style="color:var(--down)">⚠️ RESET</button>
-            <button class="backup-btn import-btn-full" onclick="openFilePicker('import')">📥 IMPORT</button>
+            <button class="backup-btn" onclick="exportData()">📤 Backup</button>
+            <button class="backup-btn" onclick="openFilePicker('restore')">🔄 Restore</button>
+            <button class="backup-btn" onclick="exportToExcel()">📊 Excel</button>
+            <button class="backup-btn" onclick="resetApp()" style="color:var(--down)">⚠️ Reset</button>
+            <button class="backup-btn import-btn-full" onclick="openFilePicker('import')">📥 Import</button>
             <input type="file" id="importFile" style="display:none" accept=".json" onchange="handleFileSelect(event)">
         </div>
     </div>
@@ -121,10 +124,10 @@
 
 <div id="delete-modal" class="modal-overlay">
     <div class="modal-content">
-        <div id="modal-msg" class="modal-title">HAPUS DATA?</div>
+        <div id="modal-msg" class="modal-title">Hapus data ini?</div>
         <div class="modal-btn-row">
-            <button class="modal-btn btn-cancel" onclick="closeDeleteModal()">BATAL</button>
-            <button id="confirm-delete-btn" class="modal-btn btn-delete">HAPUS</button>
+            <button class="modal-btn btn-cancel" onclick="closeDeleteModal()">Batal</button>
+            <button id="confirm-delete-btn" class="modal-btn btn-delete">Hapus</button>
         </div>
     </div>
 </div>
@@ -165,7 +168,7 @@
     };
 
     window.onload = () => {
-        migrateToUppercase(); // JALANKAN MIGRASI PAS START
+        migrateToUppercase();
         document.getElementById('sort-order').value = localStorage.getItem('last_sort') || 'manual';
         document.getElementById('currency-view').value = localStorage.getItem('last_cur') || 'IDR';
         watchlist.forEach(s => { if(!coinSources[s]) coinSources[s] = []; });
@@ -173,37 +176,15 @@
         setInterval(fetchAll, 60000);
     };
 
-    // FUNGSI MIGRASI DATA LAMA KE CAPITAL
     function migrateToUppercase() {
         let needsSave = false;
-        
-        // 1. Migrate watchlist
-        watchlist = watchlist.map(s => {
-            if(s !== s.toUpperCase()) needsSave = true;
-            return s.toUpperCase();
-        });
-
-        // 2. Migrate exchanges
-        allExchanges = allExchanges.map(ex => {
-            if(ex !== ex.toUpperCase()) needsSave = true;
-            return ex.toUpperCase();
-        });
-
-        // 3. Migrate Sources
+        watchlist = watchlist.map(s => { if(s !== s.toUpperCase()) needsSave = true; return s.toUpperCase(); });
+        allExchanges = allExchanges.map(ex => { if(ex !== ex.toUpperCase()) needsSave = true; return ex.toUpperCase(); });
         for (let coin in coinSources) {
             let upperCoin = coin.toUpperCase();
-            if(coin !== upperCoin) {
-                coinSources[upperCoin] = coinSources[coin];
-                delete coinSources[coin];
-                needsSave = true;
-            }
-            coinSources[upperCoin] = coinSources[upperCoin].map(src => {
-                if(src !== src.toUpperCase()) needsSave = true;
-                return src.toUpperCase();
-            });
+            if(coin !== upperCoin) { coinSources[upperCoin] = coinSources[coin]; delete coinSources[coin]; needsSave = true; }
+            coinSources[upperCoin] = coinSources[upperCoin].map(src => { if(src !== src.toUpperCase()) needsSave = true; return src.toUpperCase(); });
         }
-
-        // 4. Migrate Balances
         let newBalances = {};
         for (let coin in balances) {
             let upperCoin = coin.toUpperCase();
@@ -215,7 +196,6 @@
             }
         }
         balances = newBalances;
-
         if(needsSave) saveAll();
     }
 
@@ -266,7 +246,7 @@
                 watchlist.forEach(sym => { if (coinSources[sym]?.includes(ex)) exTotalUsd += (parseFloat(balances[sym]?.[ex] || 0) * (prices[sym] || 0)); });
                 totalAllUsd += exTotalUsd;
                 const el = document.getElementById(`val-ex-${ex}`);
-                if (el) el.innerText = (currencyView === 'IDR') ? `RP ${(exTotalUsd * usdToIdr).toLocaleString('id-ID', {maximumFractionDigits:0})}` : `$${exTotalUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                if (el) el.innerText = (currencyView === 'IDR') ? `Rp ${(exTotalUsd * usdToIdr).toLocaleString('id-ID', {maximumFractionDigits:0})}` : `$${exTotalUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             });
         } else {
             watchlist.forEach(sym => {
@@ -276,26 +256,16 @@
                 const elVal = document.getElementById(`val-coin-${sym}`);
                 const elPrice = document.getElementById(`price-coin-${sym}`);
                 const elChange = document.getElementById(`change-coin-${sym}`);
-                if (elVal) elVal.innerText = (currencyView === 'IDR') ? `RP ${(valUsd * usdToIdr).toLocaleString('id-ID', {maximumFractionDigits:0})}` : `$${valUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                if (elVal) elVal.innerText = (currencyView === 'IDR') ? `Rp ${(valUsd * usdToIdr).toLocaleString('id-ID', {maximumFractionDigits:0})}` : `$${valUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
                 if (elPrice) elPrice.innerText = sym === 'IDR' ? 'STABLE IDR' : '$' + price.toLocaleString(undefined, {minimumFractionDigits: price < 1 ? 4 : 2});
                 if (elChange) { const c = changes[sym] || "0.00"; elChange.innerText = `${parseFloat(c) >= 0 ? '+' : ''}${c}%`; elChange.className = `change-pct ${parseFloat(c) >= 0 ? 'up' : 'down'}`; }
             });
         }
-        document.getElementById('total-all-idr').innerText = `RP ${Math.round(totalAllUsd*usdToIdr).toLocaleString('id-ID')}`;
+        document.getElementById('total-all-idr').innerText = `Rp ${Math.round(totalAllUsd*usdToIdr).toLocaleString('id-ID')}`;
         document.getElementById('total-all-usd').innerText = `$${totalAllUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     }
 
-    function handleTouchStart(e, id, type) {
-        isMoving = false;
-        isLongPressActive = false;
-        touchStartY = e.touches[0].pageY;
-        longPressTimer = setTimeout(() => {
-            if(!isMoving) {
-                isLongPressActive = true;
-                openDeleteModal(id, type);
-            }
-        }, 800);
-    }
+    function handleTouchStart(e, id, type) { isMoving = false; isLongPressActive = false; touchStartY = e.touches[0].pageY; longPressTimer = setTimeout(() => { if(!isMoving) { isLongPressActive = true; openDeleteModal(id, type); } }, 800); }
     function handleTouchMove(e) { if(Math.abs(e.touches[0].pageY - touchStartY) > 10) { isMoving = true; clearTimeout(longPressTimer); } }
     function handleTouchEnd() { clearTimeout(longPressTimer); }
     function handleSimpleClick(id) { if(!isLongPressActive) { toggleDetail(id); } }
@@ -304,7 +274,7 @@
         const modal = document.getElementById('delete-modal');
         const msg = document.getElementById('modal-msg');
         const btn = document.getElementById('confirm-delete-btn');
-        msg.innerText = `HAPUS ${id}?`;
+        msg.innerText = `Hapus ${id}?`;
         modal.style.display = 'flex';
         btn.onclick = () => { if(type === 'coin') removeCoin(id); else removeExchange(id); closeDeleteModal(); };
     }
@@ -324,14 +294,14 @@
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
             exArr.forEach(ex => {
                 const logo = exchangeLogos[ex.name] || "";
-                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="TAMBAH KOIN..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah Koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
             });
         } else {
             let filtered = watchlist.filter(s => s.includes(query));
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             filtered.forEach(s => {
-                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${s}')" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="NAMA SOURCE BARU..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${s}')" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama source baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
             });
         }
         list.innerHTML = html; updatePricesOnly();
@@ -346,10 +316,10 @@
         const v = input.value.trim().toUpperCase(); if(!v) return;
         if(currentTab === 'exchange') { 
             if(!allExchanges.includes(v)) { allExchanges.push(v); saveAll(); input.value = ""; renderList(); }
-            else { showToast(`EXCHANGE ${v} UDAH ADA!`); }
+            else { showToast(`Exchange ${v} sudah ada!`); }
         } else { 
             if(!watchlist.includes(v)) { watchlist.push(v); coinSources[v] = []; saveAll(); input.value = ""; fetchAll(); }
-            else { showToast(`KOIN ${v} UDAH ADA!`); }
+            else { showToast(`Koin ${v} sudah ada!`); }
         }
     }
 
@@ -359,7 +329,7 @@
         if(s) { 
             if(!watchlist.includes(s)) { watchlist.push(s); coinSources[s]=[]; } 
             if(!coinSources[s].includes(ex)) { coinSources[s].push(ex); saveAll(); input.value=""; renderList(); fetchAll(); } 
-            else { showToast("KOIN UDAH ADA DI SINI!"); }
+            else { showToast("Koin sudah ada di sini!"); }
         } 
     }
 
@@ -368,23 +338,23 @@
         const v = input.value.trim().toUpperCase(); 
         if(v) { 
             if(!coinSources[s].includes(v)) { coinSources[s].push(v); if(!allExchanges.includes(v)) allExchanges.push(v); saveAll(); renderList(); } 
-            else { showToast("SOURCE UDAH ADA!"); }
+            else { showToast("Source sudah ada!"); }
         } 
     }
 
     function removeCoin(s) { watchlist = watchlist.filter(i => i !== s); delete balances[s]; delete coinSources[s]; saveAll(); renderList(); }
     function removeExchange(ex) { allExchanges = allExchanges.filter(e => e !== ex); watchlist.forEach(s => { if(coinSources[s]) coinSources[s] = coinSources[s].filter(src => src !== ex); }); saveAll(); renderList(); }
-    function removeCoinFromExchange(s, ex) { if(confirm(`HAPUS ${s} DARI ${ex}?`)) { coinSources[s] = coinSources[s].filter(i => i !== ex); saveAll(); renderList(); } }
-    function removeSource(s, src) { if(confirm(`HAPUS ${src}?`)) { coinSources[s] = coinSources[s].filter(i => i !== src); saveAll(); renderList(); } }
+    function removeCoinFromExchange(s, ex) { if(confirm(`Hapus ${s} dari ${ex}?`)) { coinSources[s] = coinSources[s].filter(i => i !== ex); saveAll(); renderList(); } }
+    function removeSource(s, src) { if(confirm(`Hapus ${src}?`)) { coinSources[s] = coinSources[s].filter(i => i !== src); saveAll(); renderList(); } }
     function showToast(m) { const x = document.getElementById("toast-msg"); x.innerText = m; x.className = "show"; setTimeout(() => x.className = "", 3000); }
-    function resetApp() { if(confirm("HAPUS TOTAL SEMUA DATA?")) { localStorage.clear(); location.reload(); } }
+    function resetApp() { if(confirm("Hapus total semua data?")) { localStorage.clear(); location.reload(); } }
     
     function exportData() {
         const data = { assets: watchlist, balances: balances, sources: coinSources, exchanges: allExchanges };
         const now = new Date();
         const dateStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + "_" + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0');
         const defaultName = `PORTO_${dateStr}`;
-        const fileName = prompt("BERI NAMA FILE BACKUP:", defaultName);
+        const fileName = prompt("Beri nama file backup:", defaultName);
         if (fileName === null) return;
         const finalName = fileName.trim().toUpperCase() || defaultName;
         const blob = new Blob([JSON.stringify(data)], {type:'application/json'});
@@ -400,15 +370,15 @@
                 let d = JSON.parse(f.target.result);
                 if(d.assets) d.assets = d.assets.map(s => s.toUpperCase());
                 if(d.exchanges) d.exchanges = d.exchanges.map(ex => ex.toUpperCase());
-                if (currentMode === 'restore') { if(!confirm("RESTORE LANJUT?")) return; watchlist = d.assets || []; balances = d.balances || {}; coinSources = d.sources || {}; allExchanges = d.exchanges || []; } 
-                else { if(!confirm("IMPORT LANJUT?")) return; /* Logic import... */ }
+                if (currentMode === 'restore') { if(!confirm("Restore data sekarang?")) return; watchlist = d.assets || []; balances = d.balances || {}; coinSources = d.sources || {}; allExchanges = d.exchanges || []; } 
+                else { if(!confirm("Import dan gabungkan data?")) return; /* import logic */ }
                 migrateToUppercase(); saveAll(); location.reload();
-            } catch (err) { showToast("FILE GAK VALID!"); }
+            } catch (err) { showToast("File gak valid!"); }
         };
         reader.readAsText(file);
     }
     function exportToExcel() {
-        let csv = "sep=,\nEXCHANGE,KOIN,SALDO,HARGA USD,TOTAL USD\n";
+        let csv = "sep=,\nExchange,Koin,Saldo,Harga USD,Total USD\n";
         allExchanges.forEach(ex => { watchlist.forEach(s => { if(coinSources[s]?.includes(ex)) { const bal = parseFloat(balances[s]?.[ex] || 0); if(bal > 0) csv += `${ex},${s},${bal},${prices[s]||0},${(bal*(prices[s]||0)).toFixed(2)}\n`; } }); });
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = "PORTO.csv"; a.click();
     }
