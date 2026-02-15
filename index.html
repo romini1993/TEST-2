@@ -146,11 +146,11 @@
     let expandedItem = null;
     let currentMode = 'restore';
     
-    // VARIABEL SENSOR BARU
+    // VARIABEL SENSOR
     let longPressTimer;
-    let isLongPress = false;
-    let startY = 0;
-    let isScrolling = false;
+    let isLongPressActive = false;
+    let touchStartY = 0;
+    let isMoving = false;
 
     const exchangeLogos = { 
         "BINANCE": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png", 
@@ -241,33 +241,30 @@
         document.getElementById('total-all-usd').innerText = `$${totalAllUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     }
 
-    // LOGIKA SENSOR CERDAS (ANTI SENSITIF PAS SCROLL)
+    // REVISI SENSOR: CLIK BIASA VS LONG PRESS
     function handleTouchStart(e, id, type) {
-        isLongPress = false;
-        isScrolling = false;
-        startY = e.touches ? e.touches[0].pageY : e.pageY;
-        
+        isMoving = false;
+        isLongPressActive = false;
+        touchStartY = e.touches[0].pageY;
         longPressTimer = setTimeout(() => {
-            if(!isScrolling) {
-                isLongPress = true;
+            if(!isMoving) {
+                isLongPressActive = true;
                 openDeleteModal(id, type);
             }
         }, 800);
     }
-
     function handleTouchMove(e) {
-        let currentY = e.touches ? e.touches[0].pageY : e.pageY;
-        // Jika jari bergeser lebih dari 10px, anggap sedang scroll
-        if (Math.abs(currentY - startY) > 10) {
-            isScrolling = true;
+        if(Math.abs(e.touches[0].pageY - touchStartY) > 10) {
+            isMoving = true;
             clearTimeout(longPressTimer);
         }
     }
-
-    function handleTouchEnd(id) {
+    function handleTouchEnd() {
         clearTimeout(longPressTimer);
-        // Hanya eksekusi expand jika TIDAK sedang scroll dan TIDAK sedang long press
-        if(!isScrolling && !isLongPress) {
+    }
+    function handleSimpleClick(id) {
+        // Hanya eksekusi jika bukan habis Long Press
+        if(!isLongPressActive) {
             toggleDetail(id);
         }
     }
@@ -300,14 +297,14 @@
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
             exArr.forEach(ex => {
                 const logo = exchangeLogos[ex.name.toUpperCase()] || "";
-                html += `<div class="coin-row"><div class="coin-card" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd('${ex.name}')" onmousedown="handleTouchStart(event, '${ex.name}','ex')" onmouseup="handleTouchEnd('${ex.name}')"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
             });
         } else {
             let filtered = watchlist.filter(s => s.toUpperCase().includes(query));
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             filtered.forEach(s => {
-                html += `<div class="coin-row"><div class="coin-card" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd('${s}')" onmousedown="handleTouchStart(event, '${s}','coin')" onmouseup="handleTouchEnd('${s}')"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama source baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${s}')" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama source baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
             });
         }
         list.innerHTML = html; updatePricesOnly();
