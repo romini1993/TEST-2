@@ -10,56 +10,59 @@
         :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; --subtext: #94a3b8; --up: #4ade80; --down: #f87171; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         
+        /* Layout Lock */
         html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); margin: 0; }
         .container { display: flex; flex-direction: column; height: 100vh; width: 100%; max-width: 420px; margin: 0 auto; }
 
-        /* Top section dipresin dikit biar lega */
-        .top-section { padding: 15px 15px 5px 15px; flex-shrink: 0; background: var(--bg); z-index: 10; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .brand { font-size: 18px; font-weight: bold; color: var(--accent); }
+        /* Bagian Atas Diam */
+        .top-section { padding: 20px 15px 10px 15px; flex-shrink: 0; background: var(--bg); z-index: 10; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .brand { font-size: 20px; font-weight: bold; color: var(--accent); }
         .kurs-info { font-size: 10px; color: var(--subtext); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 8px; border: 1px solid #334155; }
-        
-        .summary-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--accent); text-align: center; }
-        .summary-idr { font-size: 22px; font-weight: 800; display: block; }
-        
-        .tab-container { display: flex; gap: 8px; margin-bottom: 12px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px; border: 1px solid #334155; }
-        .tab-btn { flex: 1; padding: 8px; border-radius: 6px; border: none; background: transparent; color: var(--subtext); cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.3s; }
+        .summary-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--accent); text-align: center; }
+        .summary-idr { font-size: 26px; font-weight: 800; display: block; }
+        .tab-container { display: flex; gap: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 12px; border: 1px solid #334155; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; background: transparent; color: var(--subtext); cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s; }
         .tab-btn.active { background: var(--accent); color: #0f172a; }
-        
-        .filter-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px; color: white; outline: none; font-size: 13px; margin-bottom: 10px; }
-        .control-row { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 5px; }
-        .control-select { background: var(--card); color: white; border: 1px solid #334155; border-radius: 8px; font-size: 10px; padding: 6px; outline: none; cursor: pointer; flex: 1; }
+        .filter-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155; border-radius: 12px; padding: 12px 15px; color: white; outline: none; font-size: 14px; margin-bottom: 12px; }
+        .control-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+        .control-select { background: var(--card); color: white; border: 1px solid #334155; border-radius: 8px; font-size: 11px; padding: 8px; outline: none; cursor: pointer; flex: 1; }
 
-        /* Area Scroll */
+        /* Bagian List Bisa di-Scroll */
         #main-list { flex: 1; overflow-y: auto; padding: 10px 15px; scrollbar-width: none; }
         #main-list::-webkit-scrollbar { display: none; }
 
-        .bottom-section { padding: 12px; flex-shrink: 0; background: var(--bg); border-top: 1px dashed #334155; z-index: 10; }
-        .coin-row { position: relative; margin-bottom: 8px; }
-        .coin-card { background: var(--card); border-radius: 10px; padding: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid #334155; cursor: pointer; position: relative; z-index: 2; }
-        .logo-wrapper { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 1px solid #475569; flex-shrink: 0; background: #fff; display: flex; align-items: center; justify-content: center; }
-        .logo-wrapper img { width: 80%; height: 80%; object-fit: contain; }
-        
+        /* Bagian Bawah Diam */
+        .bottom-section { padding: 15px; flex-shrink: 0; background: var(--bg); border-top: 1px dashed #334155; z-index: 10; }
+
+        .coin-row { position: relative; margin-bottom: 10px; }
+        .coin-card { background: var(--card); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #334155; cursor: pointer; position: relative; z-index: 2; }
+        .logo-wrapper { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; border: 1px solid #475569; flex-shrink: 0; background: #000; display: flex; align-items: center; justify-content: center; }
+        .logo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-initial { width: 100%; height: 100%; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; text-transform: uppercase; border: 1px solid #475569; border-radius: 50%; }
         .info-group { flex: 1; min-width: 0; }
-        .symbol { font-size: 14px; font-weight: bold; }
+        .symbol { font-size: 15px; font-weight: bold; }
         .change-pct { font-size: 10px; font-weight: bold; margin-left: 5px; }
         .up { color: var(--up); }
         .down { color: var(--down); }
         .delete-coin { position: absolute; right: -25px; top: 50%; transform: translateY(-50%); color: var(--down); font-size: 20px; cursor: pointer; padding: 10px; }
         .details { background: #161e2e; margin: -10px 5px 10px 5px; padding: 12px; border-radius: 0 0 12px 12px; border: 1px solid #334155; display: none; }
         .source-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px; }
-        .source-label { font-size: 12px; font-weight: bold; color: var(--text); width: 90px; flex-shrink: 0; }
-        .source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 6px; padding: 6px 10px; font-size: 12px; outline: none; }
+        .source-label { font-size: 13px; font-weight: bold; color: var(--text); width: 100px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; }
+        .source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 6px; padding: 6px 10px; font-size: 13px; outline: none; }
         .del-src { color: var(--down); font-size: 18px; cursor: pointer; margin-left: 8px; }
+        .new-source-box { display: flex; gap: 5px; margin-top: 10px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .new-source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; border-radius: 6px; padding: 8px 10px; font-size: 12px; outline: none; }
+        .new-source-btn { background: #334155; color: var(--accent); border: none; border-radius: 6px; padding: 0 15px; font-weight: bold; cursor: pointer; font-size: 14px; }
         
-        .search-box { display: flex; gap: 6px; margin-bottom: 12px; }
-        .search-box input { flex: 1; background: var(--card); border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; font-size: 13px; outline: none; }
-        .add-btn { background: var(--accent); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; color: #0f172a; }
-        .backup-section { display: flex; flex-wrap: wrap; gap: 6px; }
-        .backup-btn { flex: 1 1 calc(50% - 3px); background: transparent; border: 1px solid #334155; color: var(--subtext); padding: 8px; border-radius: 8px; font-size: 10px; cursor: pointer; text-align: center; }
-        .import-btn-full { flex: 1 1 100% !important; margin-top: 2px; border: 1px solid var(--accent) !important; color: var(--accent) !important; }
+        .search-box { display: flex; gap: 8px; margin-bottom: 15px; }
+        .search-box input { flex: 1; background: var(--card); border: 1px solid #334155; color: white; padding: 12px; border-radius: 10px; outline: none; font-size: 14px; }
+        .add-btn { background: var(--accent); border: none; padding: 0 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; color: #0f172a; }
+        .backup-section { display: flex; flex-wrap: wrap; gap: 8px; }
+        .backup-btn { flex: 1 1 calc(50% - 4px); background: transparent; border: 1px solid #334155; color: var(--subtext); padding: 10px; border-radius: 8px; font-size: 11px; cursor: pointer; text-align: center; }
+        .import-btn-full { flex: 1 1 100% !important; margin-top: 4px; border: 1px solid var(--accent) !important; color: var(--accent) !important; }
         
-        #toast-msg { visibility: hidden; min-width: 180px; background-color: #f87171; color: #fff; text-align: center; border-radius: 8px; padding: 8px; position: fixed; z-index: 1000; bottom: 100px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        #toast-msg { visibility: hidden; min-width: 200px; background-color: #f87171; color: #fff; text-align: center; border-radius: 8px; padding: 10px; position: fixed; z-index: 1000; bottom: 100px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         #toast-msg.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 70px; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 70px; opacity: 0;} }
@@ -73,31 +76,33 @@
             <div id="kurs-live" class="kurs-info">USD/IDR: ...</div>
         </div>
         <div class="summary-card">
-            <span style="font-size: 10px; color: var(--accent); letter-spacing: 1px;">TOTAL SALDO</span>
+            <span style="font-size: 11px; color: var(--accent); letter-spacing: 1px;">TOTAL SALDO</span>
             <span id="total-all-idr" class="summary-idr">Rp 0</span>
-            <span id="total-all-usd" style="color: var(--subtext); font-size: 12px;">$0.00</span>
+            <span id="total-all-usd" style="color: var(--subtext); font-size: 14px;">$0.00</span>
         </div>
         <div class="tab-container">
             <button id="tab-ex" class="tab-btn active" onclick="switchTab('exchange')">Exchange</button>
             <button id="tab-coin" class="tab-btn" onclick="switchTab('coin')">Coin</button>
         </div>
-        <input type="text" id="filter-input" class="filter-input" placeholder="Cari..." oninput="renderList()">
+        <input type="text" id="filter-input" class="filter-input" placeholder="Cari Exchange atau Koin..." oninput="renderList()">
         <div class="control-row">
             <select id="sort-order" class="control-select" onchange="updateSettings()">
-                <option value="manual">Default</option>
-                <option value="name">A-Z</option>
-                <option value="value">Terbesar</option>
+                <option value="manual">Urutan: Default</option>
+                <option value="name">Urutan: A-Z</option>
+                <option value="value">Urutan: Terbesar</option>
             </select>
             <select id="currency-view" class="control-select" onchange="updateSettings()">
-                <option value="IDR">IDR</option>
-                <option value="USD">USD</option>
+                <option value="IDR">Mata Uang: IDR</option>
+                <option value="USD">Mata Uang: USD</option>
             </select>
         </div>
     </div>
+
     <div id="main-list"></div>
+
     <div class="bottom-section">
         <div class="search-box">
-            <input type="text" id="global-add-input" placeholder="Tambah..." onkeypress="if(event.key==='Enter') handleGlobalAdd()">
+            <input type="text" id="global-add-input" placeholder="Tambah Exchange atau Koin..." onkeypress="if(event.key==='Enter') handleGlobalAdd()">
             <button class="add-btn" onclick="handleGlobalAdd()">Tambah</button>
         </div>
         <div class="backup-section">
@@ -125,15 +130,14 @@
     let expandedItem = null;
     let currentMode = 'restore';
 
-    // FIX LOGO: Pakai link logo brand yang beneran
+    // FIX: Logo Exchange
     const exchangeLogos = { 
-        "BINANCE": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.png", 
+        "BINANCE": "https://cryptologos.cc/logos/binance-coin-bnb-logo.png", 
         "BYBIT": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/521.png", 
         "OKX": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/294.png", 
-        "TOKOCRYPTO": "https://www.tokocrypto.com/favicon.ico", 
-        "INDODAX": "https://indodax.com/favicon.ico", 
-        "PINTU": "https://pintu.co.id/favicon.ico", 
-        "BITMART": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/414.png"
+        "TOKOCRYPTO": "https://raw.githubusercontent.com/Pintu-Crypto-Aset/pintu-favicon/main/tokocrypto.png", 
+        "INDODAX": "https://raw.githubusercontent.com/Pintu-Crypto-Aset/pintu-favicon/main/indodax.png", 
+        "PINTU": "https://pintu.co.id/favicon.ico"
     };
 
     window.onload = () => {
@@ -172,7 +176,11 @@
     }
 
     function handleLogoError(img, sym) {
-        img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2)}</div>`;
+        if(sym === 'IDR') { img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">Rp</div>`; return; }
+        const retry = parseInt(img.getAttribute('data-retry') || "0");
+        const srcArr = [`https://coinicons-api.vercel.app/api/icon/${sym.toLowerCase()}`, `https://assets.coincap.io/assets/icons/${sym.toLowerCase()}@2x.png`];
+        if (retry < srcArr.length) { img.setAttribute('data-retry', retry + 1); img.src = srcArr[retry]; } 
+        else { img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2)}</div>`; }
     }
 
     function getCoinTotal(sym) { let t = 0; (coinSources[sym] || []).forEach(src => t += parseFloat(balances[sym]?.[src] || 0)); return t; }
@@ -219,14 +227,14 @@
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
             exArr.forEach(ex => {
                 const logo = exchangeLogos[ex.name.toUpperCase()] || "";
-                html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${ex.name}')"><div class="logo-wrapper">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><span class="delete-coin" onclick="removeExchange('${ex.name}')">×</span><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><div class="logo-wrapper" style="width:24px; height:24px; background:#000"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div style="width: 50px;"><div style="font-size:12px; font-weight:bold">${s}</div></div><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${ex.name}')"><div class="logo-wrapper">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:15px;">-</span></div></div><span class="delete-coin" onclick="removeExchange('${ex.name}')">×</span><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><div class="logo-wrapper" style="width:28px; height:28px;"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div style="width: 50px;"><div style="font-size:13px; font-weight:bold">${s}</div></div><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Koin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
             });
         } else {
             let filtered = watchlist.filter(s => s.toUpperCase().includes(query));
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             filtered.forEach(s => {
-                html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${s}')"><div class="logo-wrapper" style="background:#000"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div></div><span class="delete-coin" onclick="removeCoin('${s}')">×</span><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label">${src}</span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Source..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${s}')"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:11px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:15px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div></div><span class="delete-coin" onclick="removeCoin('${s}')">×</span><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label">${src}</span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Source..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
             });
         }
         list.innerHTML = html; updatePricesOnly();
