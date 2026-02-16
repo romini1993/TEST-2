@@ -26,7 +26,6 @@
         .tab-btn { flex: 1; padding: 8px; border-radius: 6px; border: none; background: transparent; color: var(--subtext); cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.3s; }
         .tab-btn.active { background: var(--accent); color: #0f172a; }
         
-        /* DI SINI UDAH GUA APUS TEXT-TRANSFORMNYA BIAR GAK KAPITAL */
         .filter-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px; color: white; outline: none; font-size: 13px; margin-bottom: 8px; }
         
         .control-row { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 5px; }
@@ -61,7 +60,6 @@
         .source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 5px; padding: 5px 8px; font-size: 12px; outline: none; }
         .del-src { color: var(--down); font-size: 16px; cursor: pointer; margin-left: 6px; }
         
-        /* DI SINI JUGA GUA APUS TEXT-TRANSFORMNYA */
         .new-source-box { display: flex; gap: 5px; margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
         .new-source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; border-radius: 5px; padding: 7px 8px; font-size: 11px; outline: none; }
         .new-source-btn { background: #334155; color: var(--accent); border: none; border-radius: 5px; padding: 0 12px; font-weight: bold; cursor: pointer; font-size: 13px; }
@@ -286,6 +284,11 @@
     }
     function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; }
 
+    // FUNGSI BUAT BIKIN TULISAN JADI Title Case (Abcdef)
+    function formatSuffix(str) {
+        return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+    }
+
     function renderList() {
         const list = document.getElementById('main-list');
         const query = document.getElementById('filter-input').value.toUpperCase();
@@ -298,9 +301,22 @@
             }).filter(ex => ex.name.includes(query));
             if (sortType === 'name') exArr.sort((a, b) => a.name.localeCompare(b.name));
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
+            
             exArr.forEach(ex => {
-                const logo = exchangeLogos[ex.name] || "";
-                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${ex.name}','ex')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${ex.name.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${ex.name}</span></div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah Coin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
+                // LOGIKA BARU: Split nama buat nyari Logo & Styling Suffix
+                let parts = ex.name.split(' ');
+                let brand = parts[0]; 
+                let suffixText = parts.slice(1).join(' ');
+                
+                const logo = exchangeLogos[brand] || ""; // Pake brand (kata pertama) buat nyari logo
+                
+                // Styling Nama: BYBIT tetep, sisanya kecil abu-abu
+                let displayName = `<span class="symbol">${brand}</span>`;
+                if(suffixText) {
+                    displayName += `<span style="font-size: 11px; color: var(--subtext); font-weight: normal;"> - ${formatSuffix(suffixText)}</span>`;
+                }
+
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${ex.name}','ex')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${brand.substring(0,2)}</div>`}</div><div class="info-group">${displayName}</div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah Coin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
             });
         } else {
             let filtered = watchlist.filter(s => s.includes(query));
