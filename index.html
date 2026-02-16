@@ -26,7 +26,8 @@
         .tab-btn { flex: 1; padding: 8px; border-radius: 6px; border: none; background: transparent; color: var(--subtext); cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.3s; }
         .tab-btn.active { background: var(--accent); color: #0f172a; }
         
-        .filter-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px; color: white; outline: none; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; }
+        /* DI SINI UDAH GUA APUS TEXT-TRANSFORMNYA BIAR GAK KAPITAL */
+        .filter-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px; color: white; outline: none; font-size: 13px; margin-bottom: 8px; }
         
         .control-row { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 5px; }
         .control-select { background: var(--card); color: white; border: 1px solid #334155; border-radius: 6px; font-size: 10px; padding: 6px; outline: none; cursor: pointer; flex: 1; }
@@ -60,11 +61,13 @@
         .source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 5px; padding: 5px 8px; font-size: 12px; outline: none; }
         .del-src { color: var(--down); font-size: 16px; cursor: pointer; margin-left: 6px; }
         
+        /* DI SINI JUGA GUA APUS TEXT-TRANSFORMNYA */
         .new-source-box { display: flex; gap: 5px; margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .new-source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; border-radius: 5px; padding: 7px 8px; font-size: 11px; outline: none; text-transform: uppercase; }
+        .new-source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; border-radius: 5px; padding: 7px 8px; font-size: 11px; outline: none; }
         .new-source-btn { background: #334155; color: var(--accent); border: none; border-radius: 5px; padding: 0 12px; font-weight: bold; cursor: pointer; font-size: 13px; }
         .search-box { display: flex; gap: 6px; margin-bottom: 10px; }
-        .search-box input { flex: 1; background: var(--card); border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; outline: none; font-size: 13px; text-transform: uppercase; }
+        .search-box input { flex: 1; background: var(--card); border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; outline: none; font-size: 13px; }
+        
         .add-btn { background: var(--accent); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; color: #0f172a; }
         .backup-section { display: flex; flex-wrap: wrap; gap: 6px; }
         .backup-btn { flex: 1 1 calc(50% - 3px); background: transparent; border: 1px solid #334155; color: var(--subtext); padding: 8px; border-radius: 6px; font-size: 10px; cursor: pointer; text-align: center; }
