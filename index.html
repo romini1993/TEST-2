@@ -60,9 +60,7 @@
         
         .source-label { font-size: 13px; font-weight: bold; color: var(--text); min-width: 70px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
         
-        /* Input Wrapper Panjang (225px) & Rata Kanan */
         .input-wrapper { display: flex; gap: 6px; flex: 0 0 225px; justify-content: flex-end; margin-left: auto; } 
-        /* Angka & Placeholder Rata Kiri */
         .source-input { flex: 1; width: 100%; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 5px; padding: 7px 8px; font-size: 13px; outline: none; }
         .source-input::placeholder { color: #475569; font-size: 11px; font-weight: normal; text-align: left; }
 
@@ -425,6 +423,7 @@
     function resetApp() { 
         if(confirm("Hapus total semua data?")) { 
             localStorage.clear(); watchlist = []; balances = {}; coinSources = {}; allExchanges = [];
+            prices = {}; changes = {}; 
             renderList(); updatePricesOnly(); showToast("Data sudah bersih!");
         } 
     }
@@ -456,7 +455,7 @@
                     for(let s in d.sources) { if(!coinSources[s]) coinSources[s] = []; d.sources[s].forEach(src => { if(!coinSources[s].includes(src)) coinSources[s].push(src); }); }
                     for(let s in d.balances) { if(!balances[s]) balances[s] = {}; for(let src in d.balances[s]) { balances[s][src] = d.balances[s][src]; } }
                 }
-                saveAll(); renderList(); fetchAll();
+                saveAll(); renderList(); updatePricesOnly(); fetchAll();
             } catch (err) { showToast("File gak valid!"); }
         };
         reader.readAsText(file);
