@@ -141,10 +141,10 @@
     let coinMapCG = {};
     let currentTab = 'exchange'; 
     let isFetching = false;
-    let watchlist = JSON.parse(localStorage.getItem('my_assets_v2') || '["BTC", "ETH"]');
+    let watchlist = JSON.parse(localStorage.getItem('my_assets_v2') || '[]');
     let balances = JSON.parse(localStorage.getItem('my_balances_v2') || '{}');
     let coinSources = JSON.parse(localStorage.getItem('my_coin_sources') || '{}');
-    let allExchanges = JSON.parse(localStorage.getItem('my_exchanges_v2') || '["BINANCE", "BYBIT", "OKX"]');
+    let allExchanges = JSON.parse(localStorage.getItem('my_exchanges_v2') || '[]');
     let expandedItem = null;
     let currentMode = 'restore';
     
@@ -292,7 +292,6 @@
         return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
     }
 
-    // FUNGSI TOGGLE ANTI-KEDIP
     function toggleDetail(id) {
         const target = document.getElementById(`det-${id}`);
         if (!target) return;
@@ -383,7 +382,18 @@
     function removeCoinFromExchange(s, ex) { if(confirm(`Hapus ${s} dari ${ex}?`)) { coinSources[s] = coinSources[s].filter(i => i !== ex); saveAll(); renderList(); } }
     function removeSource(s, src) { if(confirm(`Hapus ${src}?`)) { coinSources[s] = coinSources[s].filter(i => i !== src); saveAll(); renderList(); } }
     function showToast(m) { const x = document.getElementById("toast-msg"); x.innerText = m; x.className = "show"; setTimeout(() => x.className = "", 3000); }
-    function resetApp() { if(confirm("Hapus total semua data?")) { localStorage.clear(); location.reload(); } }
+    
+    function resetApp() { 
+        if(confirm("Hapus total semua data?")) { 
+            localStorage.clear(); 
+            watchlist = [];
+            balances = {};
+            coinSources = {};
+            allExchanges = [];
+            document.body.innerHTML = ""; 
+            location.replace(location.href); 
+        } 
+    }
     
     function exportData() {
         const data = { assets: watchlist, balances: balances, sources: coinSources, exchanges: allExchanges };
