@@ -54,16 +54,19 @@
         .btn-cancel { background: #334155; color: white; }
         .btn-delete { background: var(--down); color: white; }
 
+        /* Details & Spacing */
         .details { background: #161e2e; margin: -8px 4px 8px 4px; padding: 10px; border-radius: 0 0 10px 10px; border: 1px solid #334155; display: none; }
         .source-row { display: flex; align-items: center; margin-bottom: 6px; gap: 6px; }
-        .source-label { font-size: 11px; font-weight: bold; color: var(--text); width: 85px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
+        .source-row:first-child { margin-top: 8px; } /* Jarak napas bar induk ke isi pertama */
         
-        /* Dual Input Styling */
-        .input-wrapper { display: flex; gap: 4px; flex: 1; max-width: 180px; }
-        .source-input { width: 50%; background: #000; border: 1px solid #475569; color: #fff; text-align: center; border-radius: 5px; padding: 5px 4px; font-size: 10px; outline: none; }
-        .source-input::placeholder { color: #475569; font-size: 9px; }
+        .source-label { font-size: 12px; font-weight: bold; color: var(--text); width: 100px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
         
-        .del-src { color: var(--down); font-size: 16px; cursor: pointer; margin-left: 4px; }
+        /* Box Rata Kanan, Input Rata Kiri */
+        .input-wrapper { display: flex; gap: 6px; flex: 1; justify-content: flex-end; } 
+        .source-input { width: 75px; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 5px; padding: 5px 8px; font-size: 12px; outline: none; }
+        .source-input::placeholder { color: #475569; font-size: 10px; font-weight: normal; }
+        
+        .del-src { color: var(--down); font-size: 16px; cursor: pointer; margin-left: 6px; }
         
         .new-source-box { display: flex; gap: 5px; margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
         .new-source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; border-radius: 5px; padding: 7px 8px; font-size: 11px; outline: none; }
@@ -204,7 +207,7 @@
                 if (typeof balances[coin][src] === 'object') {
                     newBalances[upperCoin][upperSrc] = balances[coin][src];
                 } else {
-                    newBalances[upperCoin][upperSrc] = { amount: balances[coin][src], staking: 0 };
+                    newBalances[upperCoin][upperSrc] = { amount: balances[coin][src], staking: '' };
                 }
                 if(coin !== upperCoin || src !== upperSrc) needsSave = true;
             }
@@ -373,7 +376,7 @@
     
     function updateBal(s, src, type, v) { 
         if(!balances[s]) balances[s]={}; 
-        if(!balances[s][src] || typeof balances[s][src] !== 'object') balances[s][src] = {amount:0, staking:0};
+        if(!balances[s][src] || typeof balances[s][src] !== 'object') balances[s][src] = {amount:0, staking:''};
         balances[s][src][type] = v; 
         saveAll(); updatePricesOnly(); 
     }
