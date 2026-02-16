@@ -455,7 +455,8 @@
                     for(let s in d.sources) { if(!coinSources[s]) coinSources[s] = []; d.sources[s].forEach(src => { if(!coinSources[s].includes(src)) coinSources[s].push(src); }); }
                     for(let s in d.balances) { if(!balances[s]) balances[s] = {}; for(let src in d.balances[s]) { balances[s][src] = d.balances[s][src]; } }
                 }
-                saveAll(); renderList(); updatePricesOnly(); fetchAll();
+                migrateToUppercase();
+                saveAll(); fetchKurs(); renderList(); updatePricesOnly(); fetchAll();
             } catch (err) { showToast("File gak valid!"); }
         };
         reader.readAsText(file);
