@@ -289,6 +289,24 @@
         return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
     }
 
+    // FUNGSI TOGGLE ANTI-KEDIP
+    function toggleDetail(id) {
+        const target = document.getElementById(`det-${id}`);
+        if (!target) return;
+        const isCurrentlyOpen = target.style.display === 'block';
+        if (expandedItem && expandedItem !== id) {
+            const oldEl = document.getElementById(`det-${expandedItem}`);
+            if (oldEl) oldEl.style.display = 'none';
+        }
+        if (isCurrentlyOpen) {
+            target.style.display = 'none';
+            expandedItem = null;
+        } else {
+            target.style.display = 'block';
+            expandedItem = id;
+        }
+    }
+
     function renderList() {
         const list = document.getElementById('main-list');
         const query = document.getElementById('filter-input').value.toUpperCase();
@@ -306,13 +324,9 @@
                 let parts = ex.name.split(' ');
                 let brand = parts[0]; 
                 let suffixText = parts.slice(1).join(' ');
-                
                 const logo = exchangeLogos[brand] || ""; 
-                
                 let displayName = `<span class="symbol">${brand}</span>`;
-                if(suffixText) {
-                    displayName += `<span style="font-size: 11px; color: var(--subtext); font-weight: normal;"> - ${formatSuffix(suffixText)}</span>`;
-                }
+                if(suffixText) displayName += `<span style="font-size: 11px; color: var(--subtext); font-weight: normal;"> - ${formatSuffix(suffixText)}</span>`;
 
                 html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${ex.name}','ex')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${brand.substring(0,2)}</div>`}</div><div class="info-group">${displayName}</div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah Coin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
             });
@@ -327,7 +341,6 @@
         list.innerHTML = html; updatePricesOnly();
     }
 
-    function toggleDetail(id) { expandedItem = (expandedItem === id) ? null : id; renderList(); }
     function saveAll() { localStorage.setItem('my_assets_v2', JSON.stringify(watchlist)); localStorage.setItem('my_balances_v2', JSON.stringify(balances)); localStorage.setItem('my_coin_sources', JSON.stringify(coinSources)); localStorage.setItem('my_exchanges_v2', JSON.stringify(allExchanges)); }
     function updateBal(s, src, v) { if(!balances[s]) balances[s]={}; balances[s][src] = v; saveAll(); updatePricesOnly(); }
     
@@ -382,8 +395,8 @@
     }
 
     function openFilePicker(mode) { currentMode = mode; document.getElementById('importFile').value = ""; document.getElementById('importFile').click(); }
-    function handleFileSelect(e) {
-        const file = e.target.files[0]; if(!file) return;
+    function handleFileSelect(event) {
+        const file = event.target.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = (f) => {
             try {
