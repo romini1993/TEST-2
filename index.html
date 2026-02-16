@@ -166,7 +166,8 @@
         "BITMART": "https://assets.coingecko.com/markets/images/239/standard/Bitmart.png?1706864341", 
         "BITGET": "https://assets.coingecko.com/markets/images/540/standard/2023-07-25_21.47.43.jpg?1706864507",
         "COINBASE": "https://assets.coingecko.com/markets/images/23/standard/Coinbase_Coin_Primary.png?1706864258",
-        "UPBIT": "https://assets.coingecko.com/markets/images/117/standard/upbit.png?1706864294"
+        "UPBIT": "https://assets.coingecko.com/markets/images/117/standard/upbit.png?1706864294",
+        "WALLET": "https://cdn-icons-png.flaticon.com/128/60/60484.png"
     };
 
     window.onload = () => {
@@ -284,7 +285,6 @@
     }
     function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; }
 
-    // FUNGSI BUAT BIKIN TULISAN JADI Title Case (Abcdef)
     function formatSuffix(str) {
         return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
     }
@@ -303,14 +303,12 @@
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
             
             exArr.forEach(ex => {
-                // LOGIKA BARU: Split nama buat nyari Logo & Styling Suffix
                 let parts = ex.name.split(' ');
                 let brand = parts[0]; 
                 let suffixText = parts.slice(1).join(' ');
                 
-                const logo = exchangeLogos[brand] || ""; // Pake brand (kata pertama) buat nyari logo
+                const logo = exchangeLogos[brand] || ""; 
                 
-                // Styling Nama: BYBIT tetep, sisanya kecil abu-abu
                 let displayName = `<span class="symbol">${brand}</span>`;
                 if(suffixText) {
                     displayName += `<span style="font-size: 11px; color: var(--subtext); font-weight: normal;"> - ${formatSuffix(suffixText)}</span>`;
