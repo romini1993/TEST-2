@@ -31,7 +31,8 @@
         .control-row { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 5px; }
         .control-select { background: var(--card); color: white; border: 1px solid #334155; border-radius: 6px; font-size: 10px; padding: 6px; outline: none; cursor: pointer; flex: 1; }
 
-        #main-list { flex: 1; overflow-y: auto; padding: 5px 10px; scrollbar-width: none; }
+        /* Fix Posisi: min-height 50px biar tombol gak tenggelam pas kosong */
+        #main-list { flex: 1; overflow-y: auto; padding: 5px 10px; scrollbar-width: none; min-height: 50px; }
         #main-list::-webkit-scrollbar { display: none; }
 
         .bottom-section { padding: 10px 15px; flex-shrink: 0; background: var(--bg); border-top: 1px dashed #334155; z-index: 10; }
@@ -153,6 +154,7 @@
     let touchStartY = 0;
     let isMoving = false;
 
+    // Logo Balik ke Awal Sesuai Request Bro
     const exchangeLogos = { 
         "BINANCE": "https://assets.coingecko.com/markets/images/52/standard/binance.jpg?1706864274", 
         "BYBIT": "https://assets.coingecko.com/markets/images/698/standard/bybit_spot.png?1706864649", 
@@ -390,8 +392,9 @@
             balances = {};
             coinSources = {};
             allExchanges = [];
-            document.body.innerHTML = ""; 
-            location.replace(location.href); 
+            renderList(); // Update UI langsung tanpa reload
+            updatePricesOnly();
+            showToast("Data sudah bersih!");
         } 
     }
     
@@ -431,7 +434,7 @@
                         for(let src in d.balances[s]) { balances[s][src] = d.balances[s][src]; }
                     }
                 }
-                saveAll(); location.reload();
+                saveAll(); renderList(); fetchAll(); // Update UI langsung
             } catch (err) { showToast("File gak valid!"); }
         };
         reader.readAsText(file);
