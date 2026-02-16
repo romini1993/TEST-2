@@ -56,9 +56,14 @@
 
         .details { background: #161e2e; margin: -8px 4px 8px 4px; padding: 10px; border-radius: 0 0 10px 10px; border: 1px solid #334155; display: none; }
         .source-row { display: flex; align-items: center; margin-bottom: 6px; gap: 6px; }
-        .source-label { font-size: 12px; font-weight: bold; color: var(--text); width: 90px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
-        .source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 5px; padding: 5px 8px; font-size: 12px; outline: none; }
-        .del-src { color: var(--down); font-size: 16px; cursor: pointer; margin-left: 6px; }
+        .source-label { font-size: 11px; font-weight: bold; color: var(--text); width: 85px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
+        
+        /* Dual Input Styling */
+        .input-wrapper { display: flex; gap: 4px; flex: 1; max-width: 180px; }
+        .source-input { width: 50%; background: #000; border: 1px solid #475569; color: #fff; text-align: center; border-radius: 5px; padding: 5px 4px; font-size: 10px; outline: none; }
+        .source-input::placeholder { color: #475569; font-size: 9px; }
+        
+        .del-src { color: var(--down); font-size: 16px; cursor: pointer; margin-left: 4px; }
         
         .new-source-box { display: flex; gap: 5px; margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
         .new-source-input { flex: 1; background: #000; border: 1px solid #475569; color: #fff; border-radius: 5px; padding: 7px 8px; font-size: 11px; outline: none; }
@@ -138,7 +143,6 @@
     let usdToIdr = 16000;
     let prices = {};
     let changes = {};
-    let coinMapCG = {};
     let currentTab = 'exchange'; 
     let isFetching = false;
     let watchlist = JSON.parse(localStorage.getItem('my_assets_v2') || '[]');
@@ -178,7 +182,7 @@
         document.getElementById('sort-order').value = localStorage.getItem('last_sort') || 'manual';
         document.getElementById('currency-view').value = localStorage.getItem('last_cur') || 'IDR';
         watchlist.forEach(s => { if(!coinSources[s]) coinSources[s] = []; });
-        renderList(); fetchKurs(); fetchCoinMap(); fetchAll();
+        renderList(); fetchKurs(); fetchAll();
         setInterval(fetchAll, 60000);
     };
 
@@ -197,7 +201,11 @@
             newBalances[upperCoin] = {};
             for (let src in balances[coin]) {
                 let upperSrc = src.toUpperCase();
-                newBalances[upperCoin][upperSrc] = balances[coin][src];
+                if (typeof balances[coin][src] === 'object') {
+                    newBalances[upperCoin][upperSrc] = balances[coin][src];
+                } else {
+                    newBalances[upperCoin][upperSrc] = { amount: balances[coin][src], staking: 0 };
+                }
                 if(coin !== upperCoin || src !== upperSrc) needsSave = true;
             }
         }
@@ -215,8 +223,6 @@
             if(d.tether?.idr) { usdToIdr = d.tether.idr; document.getElementById('kurs-live').innerText = `USD/IDR: ${Math.round(usdToIdr).toLocaleString('id-ID')}`; updatePricesOnly(); }
         } catch(e) {}
     }
-
-    async function fetchCoinMap() { try { const r = await fetch('https://api.coingecko.com/api/v3/coins/list'); (await r.json()).forEach(c => { coinMapCG[c.symbol.toUpperCase()] = c.id; }); } catch(e) {} }
 
     async function fetchAll() {
         if(isFetching) return; isFetching = true;
@@ -241,7 +247,18 @@
         else { img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2).toUpperCase()}</div>`; }
     }
 
-    function getCoinTotal(sym) { let t = 0; (coinSources[sym] || []).forEach(src => t += parseFloat(balances[sym]?.[src] || 0)); return t; }
+    function getCoinTotal(sym) { 
+        let t = 0; 
+        (coinSources[sym] || []).forEach(src => {
+            const data = balances[sym]?.[src];
+            if (typeof data === 'object') {
+                t += parseFloat(data.amount || 0) + parseFloat(data.staking || 0);
+            } else {
+                t += parseFloat(data || 0);
+            }
+        }); 
+        return t; 
+    }
 
     function updatePricesOnly() {
         const currencyView = document.getElementById('currency-view').value;
@@ -249,7 +266,13 @@
         if (currentTab === 'exchange') {
             allExchanges.forEach(ex => {
                 let exTotalUsd = 0;
-                watchlist.forEach(sym => { if (coinSources[sym]?.includes(ex)) exTotalUsd += (parseFloat(balances[sym]?.[ex] || 0) * (prices[sym] || 0)); });
+                watchlist.forEach(sym => { 
+                    if (coinSources[sym]?.includes(ex)) {
+                        const data = balances[sym]?.[ex];
+                        let balTotal = (typeof data === 'object') ? (parseFloat(data.amount||0) + parseFloat(data.staking||0)) : parseFloat(data||0);
+                        exTotalUsd += (balTotal * (prices[sym] || 0)); 
+                    }
+                });
                 totalAllUsd += exTotalUsd;
                 const el = document.getElementById(`val-ex-${ex}`);
                 if (el) el.innerText = (currencyView === 'IDR') ? `Rp ${(exTotalUsd * usdToIdr).toLocaleString('id-ID', {maximumFractionDigits:0})}` : `$${exTotalUsd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
@@ -288,9 +311,7 @@
     }
     function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; }
 
-    function formatSuffix(str) {
-        return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
-    }
+    function formatSuffix(str) { return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }
 
     function toggleDetail(id) {
         const target = document.getElementById(`det-${id}`);
@@ -300,13 +321,8 @@
             const oldEl = document.getElementById(`det-${expandedItem}`);
             if (oldEl) oldEl.style.display = 'none';
         }
-        if (isCurrentlyOpen) {
-            target.style.display = 'none';
-            expandedItem = null;
-        } else {
-            target.style.display = 'block';
-            expandedItem = id;
-        }
+        if (isCurrentlyOpen) { target.style.display = 'none'; expandedItem = null; } 
+        else { target.style.display = 'block'; expandedItem = id; }
     }
 
     function renderList() {
@@ -316,7 +332,11 @@
         let html = "";
         if (currentTab === 'exchange') {
             let exArr = allExchanges.map(ex => {
-                let t = 0; watchlist.forEach(s => { if(coinSources[s]?.includes(ex)) t += (parseFloat(balances[s]?.[ex] || 0) * (prices[s] || 0)); });
+                let t = 0; watchlist.forEach(s => { if(coinSources[s]?.includes(ex)) {
+                    const d = balances[s]?.[ex];
+                    let b = (typeof d === 'object') ? (parseFloat(d.amount||0) + parseFloat(d.staking||0)) : parseFloat(d||0);
+                    t += (b * (prices[s] || 0));
+                }});
                 return { name: ex, totalValue: t };
             }).filter(ex => ex.name.includes(query));
             if (sortType === 'name') exArr.sort((a, b) => a.name.localeCompare(b.name));
@@ -326,38 +346,47 @@
                 let parts = ex.name.split(' ');
                 let brand = parts[0]; 
                 let suffixText = parts.slice(1).join(' ');
-                
-                // Fix Logo Logic: Pake brand awal buat nyari logo di object exchangeLogos
                 const logo = exchangeLogos[brand] || ""; 
-                
                 let displayName = `<span class="symbol">${brand}</span>`;
                 if(suffixText) displayName += `<span style="font-size: 11px; color: var(--subtext); font-weight: normal;"> - ${formatSuffix(suffixText)}</span>`;
 
-                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${ex.name}','ex')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${brand.substring(0,2)}</div>`}</div><div class="info-group">${displayName}</div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:24px; height:24px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[ex.name] || ''}" oninput="updateBal('${s}','${ex.name}',this.value)" placeholder="0"><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah Coin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${ex.name}','ex')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${brand.substring(0,2)}</div>`}</div><div class="info-group">${displayName}</div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => {
+                    const d = balances[s]?.[ex.name] || {amount:'', staking:''};
+                    return `<div class="source-row"><label class="source-label"><div class="logo-wrapper" style="width:20px; height:20px; border:none"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><span>${s}</span></label><div class="input-wrapper"><input type="number" class="source-input" inputmode="decimal" value="${d.amount||''}" oninput="updateBal('${s}','${ex.name}','amount',this.value)" placeholder="Amount"><input type="number" class="source-input" inputmode="decimal" value="${d.staking||''}" oninput="updateBal('${s}','${ex.name}','staking',this.value)" placeholder="Staking"></div><span class="del-src" onclick="removeCoinFromExchange('${s}', '${ex.name}')">×</span></div>`;
+                }).join('')}<div class="new-source-box"><input type="text" id="add-coin-to-${ex.name}" class="new-source-input" placeholder="Tambah Coin..." onkeypress="if(event.key==='Enter') addCoinToExchange('${ex.name}')"><button class="new-source-btn" onclick="addCoinToExchange('${ex.name}')">+</button></div></div></div>`;
             });
         } else {
             let filtered = watchlist.filter(s => s.includes(query));
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             filtered.forEach(s => {
-                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${s}')" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${s}','coin')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><input type="number" class="source-input" inputmode="decimal" value="${balances[s]?.[src]||''}" oninput="updateBal('${s}','${src}',this.value)" placeholder="0"><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama Source Baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${s}')" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${s}','coin')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => {
+                    const d = balances[s]?.[src] || {amount:'', staking:''};
+                    return `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><div class="input-wrapper"><input type="number" class="source-input" inputmode="decimal" value="${d.amount||''}" oninput="updateBal('${s}','${src}','amount',this.value)" placeholder="Amount"><input type="number" class="source-input" inputmode="decimal" value="${d.staking||''}" oninput="updateBal('${s}','${src}','staking',this.value)" placeholder="Staking"></div><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`;
+                }).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama Source Baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
             });
         }
         list.innerHTML = html; updatePricesOnly();
     }
 
     function saveAll() { localStorage.setItem('my_assets_v2', JSON.stringify(watchlist)); localStorage.setItem('my_balances_v2', JSON.stringify(balances)); localStorage.setItem('my_coin_sources', JSON.stringify(coinSources)); localStorage.setItem('my_exchanges_v2', JSON.stringify(allExchanges)); }
-    function updateBal(s, src, v) { if(!balances[s]) balances[s]={}; balances[s][src] = v; saveAll(); updatePricesOnly(); }
+    
+    function updateBal(s, src, type, v) { 
+        if(!balances[s]) balances[s]={}; 
+        if(!balances[s][src] || typeof balances[s][src] !== 'object') balances[s][src] = {amount:0, staking:0};
+        balances[s][src][type] = v; 
+        saveAll(); updatePricesOnly(); 
+    }
     
     function handleGlobalAdd() {
         const input = document.getElementById('global-add-input');
         const v = input.value.trim().toUpperCase(); if(!v) return;
         if(currentTab === 'exchange') { 
             if(!allExchanges.includes(v)) { allExchanges.push(v); saveAll(); input.value = ""; renderList(); }
-            else { showToast(`Exchange ${v} sudah ada!`); }
+            else showToast(`Exchange ${v} sudah ada!`);
         } else { 
             if(!watchlist.includes(v)) { watchlist.push(v); coinSources[v] = []; saveAll(); input.value = ""; fetchAll(); }
-            else { showToast(`Koin ${v} sudah ada!`); }
+            else showToast(`Koin ${v} sudah ada!`);
         }
     }
 
@@ -367,7 +396,7 @@
         if(s) { 
             if(!watchlist.includes(s)) { watchlist.push(s); coinSources[s]=[]; } 
             if(!coinSources[s].includes(ex)) { coinSources[s].push(ex); saveAll(); input.value=""; renderList(); fetchAll(); } 
-            else { showToast("Koin sudah ada di sini!"); }
+            else showToast("Koin sudah ada di sini!");
         } 
     }
 
@@ -376,7 +405,7 @@
         const v = input.value.trim().toUpperCase(); 
         if(v) { 
             if(!coinSources[s].includes(v)) { coinSources[s].push(v); if(!allExchanges.includes(v)) allExchanges.push(v); saveAll(); renderList(); } 
-            else { showToast("Source sudah ada!"); }
+            else showToast("Source sudah ada!");
         } 
     }
 
@@ -388,14 +417,8 @@
     
     function resetApp() { 
         if(confirm("Hapus total semua data?")) { 
-            localStorage.clear(); 
-            watchlist = [];
-            balances = {};
-            coinSources = {};
-            allExchanges = [];
-            renderList();
-            updatePricesOnly();
-            showToast("Data sudah bersih!");
+            localStorage.clear(); watchlist = []; balances = {}; coinSources = {}; allExchanges = [];
+            renderList(); updatePricesOnly(); showToast("Data sudah bersih!");
         } 
     }
     
@@ -403,12 +426,10 @@
         const data = { assets: watchlist, balances: balances, sources: coinSources, exchanges: allExchanges };
         const now = new Date();
         const dateStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + "_" + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0');
-        const defaultName = `PORTO_${dateStr}`;
-        const fileName = prompt("Beri nama file backup:", defaultName);
-        if (fileName === null) return;
-        const finalName = fileName.trim().toUpperCase() || defaultName;
+        const fileName = prompt("Beri nama file backup:", `PORTO_${dateStr}`).trim().toUpperCase();
+        if (!fileName) return;
         const blob = new Blob([JSON.stringify(data)], {type:'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${finalName}.json`; a.click();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${fileName}.json`; a.click();
     }
 
     function openFilePicker(mode) { currentMode = mode; document.getElementById('importFile').value = ""; document.getElementById('importFile').click(); }
@@ -420,20 +441,13 @@
                 let d = JSON.parse(f.target.result);
                 if (currentMode === 'restore') {
                     if(!confirm("Restore data sekarang?")) return;
-                    watchlist = d.assets || []; balances = d.balances || {}; 
-                    coinSources = d.sources || {}; allExchanges = d.exchanges || [];
+                    watchlist = d.assets || []; balances = d.balances || {}; coinSources = d.sources || {}; allExchanges = d.exchanges || [];
                 } else {
                     if(!confirm("Import dan gabungkan data?")) return;
                     (d.assets || []).forEach(s => { if(!watchlist.includes(s)) watchlist.push(s); });
                     (d.exchanges || []).forEach(ex => { if(!allExchanges.includes(ex)) allExchanges.push(ex); });
-                    for(let s in d.sources) { 
-                        if(!coinSources[s]) coinSources[s] = [];
-                        d.sources[s].forEach(src => { if(!coinSources[s].includes(src)) coinSources[s].push(src); });
-                    }
-                    for(let s in d.balances) {
-                        if(!balances[s]) balances[s] = {};
-                        for(let src in d.balances[s]) { balances[s][src] = d.balances[s][src]; }
-                    }
+                    for(let s in d.sources) { if(!coinSources[s]) coinSources[s] = []; d.sources[s].forEach(src => { if(!coinSources[s].includes(src)) coinSources[s].push(src); }); }
+                    for(let s in d.balances) { if(!balances[s]) balances[s] = {}; for(let src in d.balances[s]) { balances[s][src] = d.balances[s][src]; } }
                 }
                 saveAll(); renderList(); fetchAll();
             } catch (err) { showToast("File gak valid!"); }
@@ -441,8 +455,13 @@
         reader.readAsText(file);
     }
     function exportToExcel() {
-        let csv = "sep=,\nExchange,Koin,Saldo,Harga USD,Total USD\n";
-        allExchanges.forEach(ex => { watchlist.forEach(s => { if(coinSources[s]?.includes(ex)) { const bal = parseFloat(balances[s]?.[ex] || 0); if(bal > 0) csv += `${ex},${s},${bal},${prices[s]||0},${(bal*(prices[s]||0)).toFixed(2)}\n`; } }); });
+        let csv = "sep=,\nExchange,Koin,Amount,Staking,Harga USD,Total USD\n";
+        allExchanges.forEach(ex => { watchlist.forEach(s => { if(coinSources[s]?.includes(ex)) { 
+            const d = balances[s]?.[ex];
+            let am = (typeof d === 'object') ? (parseFloat(d.amount||0)) : parseFloat(d||0);
+            let st = (typeof d === 'object') ? (parseFloat(d.staking||0)) : 0;
+            if(am+st > 0) csv += `${ex},${s},${am},${st},${prices[s]||0},${((am+st)*(prices[s]||0)).toFixed(2)}\n`; 
+        } }); });
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = "PORTO.csv"; a.click();
     }
 </script>
