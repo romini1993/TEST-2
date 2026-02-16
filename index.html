@@ -58,15 +58,14 @@
         .source-row { display: flex; align-items: center; margin-bottom: 6px; gap: 6px; }
         .source-row:first-child { margin-top: 8px; } 
         
-        /* Label Source di kiri */
-        .source-label { font-size: 12px; font-weight: bold; color: var(--text); min-width: 80px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
+        /* Font Label Detail (Exchange/Coin di expand) */
+        .source-label { font-size: 13px; font-weight: bold; color: var(--text); min-width: 70px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
         
-        /* Wrapper Input Habisin Space ke Kiri */
-        .input-wrapper { display: flex; gap: 6px; flex: 1; justify-content: flex-end; } 
-        .source-input { flex: 1; width: 100%; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 5px; padding: 7px 10px; font-size: 14px; outline: none; }
+        /* Ukuran Input Wrapper dikecilin dikit biar label di kiri lebih luas */
+        .input-wrapper { display: flex; gap: 6px; flex: 0 0 180px; justify-content: flex-end; } 
+        .source-input { flex: 1; width: 100%; background: #000; border: 1px solid #475569; color: #fff; text-align: left; border-radius: 5px; padding: 7px 8px; font-size: 13px; outline: none; }
         .source-input::placeholder { color: #475569; font-size: 11px; font-weight: normal; }
 
-        /* Hilangin Segitiga Spin Button */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
@@ -81,7 +80,7 @@
         
         .add-btn { background: var(--accent); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; color: #0f172a; }
         .backup-section { display: flex; flex-wrap: wrap; gap: 6px; }
-        .backup-btn { flex: 1 1 calc(50% - 3px); background: transparent; border: 1px solid #334155; color: var(--subtext); padding: 8px; border-radius: 6px; font-size: 10px; cursor: pointer; text-align: center; }
+        .backup-btn { flex: 1 1 calc(50% - 3px); background: transparent; border: 1px solid #334155; color: var(--subtext); padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: center; }
         .import-btn-full { flex: 1 1 100% !important; margin-top: 2px; border: 1px solid var(--accent) !important; color: var(--accent) !important; }
         #toast-msg { visibility: hidden; min-width: 180px; background-color: #f87171; color: #fff; text-align: center; border-radius: 8px; padding: 8px; position: fixed; z-index: 1000; bottom: 100px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         #toast-msg.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
@@ -356,7 +355,7 @@
                 let suffixText = parts.slice(1).join(' ');
                 const logo = exchangeLogos[brand] || ""; 
                 let displayName = `<span class="symbol">${brand}</span>`;
-                if(suffixText) displayName += `<span style="font-size: 11px; color: var(--subtext); font-weight: normal;"> - ${formatSuffix(suffixText)}</span>`;
+                if(suffixText) displayName += `<span style="font-size: 12px; color: var(--subtext); font-weight: normal;"> - ${formatSuffix(suffixText)}</span>`;
 
                 html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${ex.name}')" ontouchstart="handleTouchStart(event, '${ex.name}','ex')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${ex.name}','ex')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${brand.substring(0,2)}</div>`}</div><div class="info-group">${displayName}</div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem===ex.name?'block':'none'}">${watchlist.filter(s => coinSources[s]?.includes(ex.name)).map(s => {
                     const d = balances[s]?.[ex.name] || {amount:'', staking:''};
@@ -368,7 +367,7 @@
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             filtered.forEach(s => {
-                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${s}')" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${s}','coin')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:14px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => {
+                html += `<div class="coin-row"><div class="coin-card" onclick="handleSimpleClick('${s}')" ontouchstart="handleTouchStart(event, '${s}','coin')" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()" onmousedown="handleMouseDown(event, '${s}','coin')" onmouseup="handleMouseUp()" onmouseleave="handleMouseUp()"><div class="logo-wrapper"><img src="https://coinicons-api.vercel.app/api/icon/${s.toLowerCase()}" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:13px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem===s?'block':'none'}">${(coinSources[s]||[]).map(src => {
                     const d = balances[s]?.[src] || {amount:'', staking:''};
                     return `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><div class="input-wrapper"><input type="number" class="source-input" inputmode="decimal" value="${d.amount||''}" oninput="updateBal('${s}','${src}','amount',this.value)" placeholder="Amount"><input type="number" class="source-input" inputmode="decimal" value="${d.staking||''}" oninput="updateBal('${s}','${src}','staking',this.value)" placeholder="Staking"></div><span class="del-src" onclick="removeSource('${s}', '${src}')">×</span></div>`;
                 }).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Nama Source Baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
