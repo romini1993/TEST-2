@@ -119,20 +119,19 @@
             <button id="tab-ex" class="tab-btn active" onclick="switchTab('exchange')">Exchange</button>
             <button id="tab-coin" class="tab-btn" onclick="switchTab('coin')">Coin</button>
         </div>
-       <input type="text" id="filter-input" class="filter-input" placeholder="Cari..." oninput="renderList()">
-<div class="control-row">
-    <select id="sort-order" class="control-select" onchange="updateSettings()">
-        <option value="manual">Urutan: Default</option>
-        <option value="name">Urutan: A-Z</option>
-        <option value="value">Urutan: Terbesar</option>
-        <option value="gain">Urutan: Gain</option>
-    </select>
-    
-    <select id="currency-view" class="control-select" onchange="updateSettings()">
-        <option value="IDR">Mata Uang: IDR</option>
-        <option value="USD">Mata Uang: USD</option>
-    </select>
-</div>
+        <input type="text" id="filter-input" class="filter-input" placeholder="Cari..." oninput="renderList()">
+        <div class="control-row">
+            <select id="sort-order" class="control-select" onchange="updateSettings()">
+                <option value="manual">Urutan: Default</option>
+                <option value="name">Urutan: A-Z</option>
+                <option value="value">Urutan: Terbesar</option>
+            </select>
+            <select id="currency-view" class="control-select" onchange="updateSettings()">
+                <option value="IDR">Mata Uang: IDR</option>
+                <option value="USD">Mata Uang: USD</option>
+            </select>
+        </div>
+    </div>
 
     <div id="main-list"></div>
 
@@ -254,45 +253,26 @@
     }, { passive: true });
 
     // --- LOGO HIERARCHY (FITUR BARU) ---
-    // --- LOGO HIERARCHY (VERSI ANTI-ERROR) ---
-    // --- LOGO HIERARCHY (VERSI ANTI-ERROR) ---
     function handleLogoError(img, sym) {
         if (sym === 'IDR') {
             img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">RP</div>`;
             return;
         }
-
-        // Ambil urutan percobaan (retry)
-        let retry = parseInt(img.getAttribute('data-retry') || "0");
-        const S = sym.toUpperCase();
+        const retry = parseInt(img.getAttribute('data-retry') || "0");
         const s = sym.toLowerCase();
+        const S = sym.toUpperCase();
 
-        // Daftar jalur cadangan (semakin ke bawah semakin buat cadangan)
-        const sources = [
-            // 1. Link KuCoin Utama (dari file index 6 lu)
-            `https://www.kucoin.com/_next/image?url=https://assets.static-up.com/cms/media/3v4isL7YV6S60nu9h6Tf8oO7XW6703O1656515856755/${S}.png&w=64&q=75`,
-            
-            // 2. Jalur Tikus KuCoin (Cadangan di index 6)
-            `https://icon.staticimgs.com/images/coin_icon/64/${s}.png`,
-            
-            // 3. Binance (Paling jarang mati)
-            `https://bin.bnbstatic.com/static/assets/logos/${S}.png`,
-            
-            // 4. Bybit
-            `https://s1.bybit.com/v3/assets/token/${S}.png`
+        // Urutan pintu sesuai request
+     const sources = [
+
+            `https://gate.io/images/coin_icon/64/${s}.png`,
+            `https://assets.coincap.io/assets/icons/${s}@2x.png`,
+            `https://static.okx.com/cdn/oksupport/asset/currency/icon/${s}.png`
         ];
-
         if (retry < sources.length) {
-            // Pasang link cadangan sesuai urutan
-            img.src = sources[retry];
-            
-            // Naikin angka retry buat percobaan berikutnya
             img.setAttribute('data-retry', retry + 1);
-            
-            // Tambahin ini biar gak diblokir server (Referrer Policy)
-            img.setAttribute('referrerpolicy', 'no-referrer');
+            img.src = sources[retry];
         } else {
-            // Kalau semua cara gagal, baru munculin inisial huruf
             img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2).toUpperCase()}</div>`;
         }
     }
@@ -437,21 +417,8 @@
             });
         } else {
             let filtered = watchlist.filter(s => s.includes(query));
-            
-            // Logika Sortir Baru ada di sini bro
-            if (sortType === 'name') {
-                filtered.sort((a, b) => a.localeCompare(b));
-            } else if (sortType === 'value') {
-                filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
-            } else if (sortType === 'gain') {
-                // Ini buat ngurutin dari kenaikan % tertinggi
-                filtered.sort((a, b) => {
-                    let gainA = parseFloat(changes[a] || -999);
-                    let gainB = parseFloat(changes[b] || -999);
-                    return gainB - gainA;
-                });
-            }
-
+            if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
+            else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             filtered.forEach(s => {
                 let subSrc = [...(coinSources[s]||[])];
                 html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${s}')" onmousedown="startHold(event,'${s}','coin')" onmousemove="moveHold(event)" onmouseup="clearHold()" ontouchstart="startHold(event,'${s}','coin')" ontouchmove="moveHold(event)" ontouchend="clearHold()"><div class="logo-wrapper"><img src="any" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:13px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem === s ? 'block' : 'none'}">${subSrc.map(src => {
@@ -508,33 +475,19 @@
     }
 
     function exportToExcel(fileName) { 
-    // Kita tambahin instruksi khusus buat Excel (sep=,)
-    // Dan pastiin semua angka pake format yang konsisten
     let csv = "sep=,\nExchange,Koin,Amount,Staking,Harga USD,Total USD\n"; 
-    
     allExchanges.forEach(ex => { 
         watchlist.forEach(s => { 
             if(coinSources[s]?.includes(ex)) { 
                 const d = balances[s]?.[ex]; 
                 let am = (typeof d === 'object') ? (parseFloat(d.amount||0)) : parseFloat(d||0); 
                 let st = (typeof d === 'object') ? (parseFloat(d.staking||0)) : 0; 
-                
-                if(am + st > 0) {
-                    let totalQty = am + st;
-                    let price = prices[s] || 0;
-                    let totalUsd = (totalQty * price).toFixed(2);
-                    
-                    // Kita pake tanda kutip ("") biar Excel ga salah baca angka desimal
-                    csv += `"${ex}","${s}","${am}","${st}","${price}","${totalUsd}"\n`; 
-                } 
+                if(am+st > 0) csv += `${ex},${s},${am},${st},${prices[s]||0},${((am+st)*(prices[s]||0)).toFixed(2)}\n`; 
             } 
         }); 
     }); 
-    
     const a = document.createElement('a'); 
-    // Kita pake format UTF-8 biar karakter khusus aman
-    const blob = new Blob(["\ufeff" + csv], {type:'text/csv;charset=utf-8;'}); 
-    a.href = URL.createObjectURL(blob); 
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); 
     a.download = `${fileName.toUpperCase().trim()}.csv`; 
     a.click(); 
     showToast("Excel Berhasil Disimpan!");
