@@ -122,10 +122,11 @@
         <input type="text" id="filter-input" class="filter-input" placeholder="Cari..." oninput="renderList()">
         <div class="control-row">
             <select id="sort-order" class="control-select" onchange="updateSettings()">
-                <option value="manual">Urutan: Default</option>
-                <option value="name">Urutan: A-Z</option>
-                <option value="value">Urutan: Terbesar</option>
-            </select>
+                <select id="sort-order" class="control-select" onchange="updateSettings()">
+    <option value="manual">Urutan: Default</option>
+    <option value="name">Urutan: A-Z</option>
+    <option value="value">Urutan: Terbesar</option>
+    <option value="gainers">Urutan: Gainers</option> </select>
             <select id="currency-view" class="control-select" onchange="updateSettings()">
                 <option value="IDR">Mata Uang: IDR</option>
                 <option value="USD">Mata Uang: USD</option>
@@ -401,14 +402,27 @@
                 let t = 0; watchlist.forEach(s => { if(coinSources[s]?.includes(ex)) { const d = balances[s]?.[ex]; let b = (typeof d === 'object') ? (parseFloat(d.amount||0) + parseFloat(d.staking||0)) : parseFloat(d||0); t += (b * (prices[s] || 0)); }});
                 return { name: ex, totalValue: t };
             }).filter(ex => ex.name.includes(query));
+
+            // LOGIKA SORTIR EXCHANGE
             if (sortType === 'name') exArr.sort((a, b) => a.name.localeCompare(b.name));
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
+            // Kalau pilih Gainers di tab Exchange, default ke urutan nilai terbesar aja bro
+            else if (sortType === 'gainers') exArr.sort((a, b) => b.totalValue - a.totalValue);
 
             exArr.forEach(ex => {
                 let brand = ex.name.split(' ')[0]; let suffix = ex.name.split(' ').slice(1).join(' '); const logo = exchangeLogos[brand] || "";
                 let subKoin = watchlist.filter(s => coinSources[s]?.includes(ex.name));
+
+                // SORTIR KOIN DI DALAM EXCHANGE
                 if (sortType === 'name') subKoin.sort((a, b) => a.localeCompare(b));
                 else if (sortType === 'value') subKoin.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
+                else if (sortType === 'gainers') {
+                    subKoin.sort((a, b) => {
+                        let cA = parseFloat(changes[a] || -999);
+                        let cB = parseFloat(changes[b] || -999);
+                        return cB - cA;
+                    });
+                }
 
                 html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${ex.name}')" onmousedown="startHold(event,'${ex.name}','exchange')" onmousemove="moveHold(event)" onmouseup="clearHold()" ontouchstart="startHold(event,'${ex.name}','exchange')" ontouchmove="moveHold(event)" ontouchend="clearHold()"><div class="logo-wrapper" style="background:#000">${logo ? `<img src="${logo}">` : `<div class="logo-initial">${brand.substring(0,2)}</div>`}</div><div class="info-group"><span class="symbol">${brand}</span>${suffix ? `<span style="font-size: 11px; color: var(--subtext); font-weight: normal;"> - ${suffix.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}</span>` : ''}</div><div style="text-align:right; margin-right:10px;"><span id="val-ex-${ex.name}" style="font-weight:bold; font-size:14px;">-</span></div></div><div id="det-${ex.name}" class="details" style="display:${expandedItem === ex.name ? 'block' : 'none'}">${subKoin.map(s => {
                     const d = (balances[s] && balances[s][ex.name]) ? balances[s][ex.name] : {amount:'', staking:''};
@@ -417,8 +431,18 @@
             });
         } else {
             let filtered = watchlist.filter(s => s.includes(query));
+            
+            // LOGIKA SORTIR DI TAB COIN
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
+            else if (sortType === 'gainers') {
+                filtered.sort((a, b) => {
+                    let cA = parseFloat(changes[a] || -999);
+                    let cB = parseFloat(changes[b] || -999);
+                    return cB - cA;
+                });
+            }
+
             filtered.forEach(s => {
                 let subSrc = [...(coinSources[s]||[])];
                 html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${s}')" onmousedown="startHold(event,'${s}','coin')" onmousemove="moveHold(event)" onmouseup="clearHold()" ontouchstart="startHold(event,'${s}','coin')" ontouchmove="moveHold(event)" ontouchend="clearHold()"><div class="logo-wrapper"><img src="any" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:13px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem === s ? 'block' : 'none'}">${subSrc.map(src => {
