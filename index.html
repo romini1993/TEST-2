@@ -403,16 +403,14 @@
                 return { name: ex, totalValue: t };
             }).filter(ex => ex.name.includes(query));
 
-            // SORTIR EXCHANGE
             if (sortType === 'name') exArr.sort((a, b) => a.name.localeCompare(b.name));
             else if (sortType === 'value') exArr.sort((a, b) => b.totalValue - a.totalValue);
-            else if (sortType === 'gainers') exArr.sort((a, b) => b.totalValue - a.totalValue); // Default ke terbesar
+            else if (sortType === 'gainers') exArr.sort((a, b) => b.totalValue - a.totalValue);
 
             exArr.forEach(ex => {
                 let brand = ex.name.split(' ')[0]; let suffix = ex.name.split(' ').slice(1).join(' '); const logo = exchangeLogos[brand] || "";
                 let subKoin = watchlist.filter(s => coinSources[s]?.includes(ex.name));
 
-                // SORTIR KOIN DI DALAM EXCHANGE
                 if (sortType === 'name') subKoin.sort((a, b) => a.localeCompare(b));
                 else if (sortType === 'value') subKoin.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
                 else if (sortType === 'gainers') {
@@ -427,7 +425,6 @@
         } else {
             let filtered = watchlist.filter(s => s.includes(query));
 
-            // SORTIR TAB COIN
             if (sortType === 'name') filtered.sort((a, b) => a.localeCompare(b));
             else if (sortType === 'value') filtered.sort((a, b) => (getCoinTotal(b)*(prices[b]||0)) - (getCoinTotal(a)*(prices[a]||0)));
             else if (sortType === 'gainers') {
@@ -444,18 +441,6 @@
         }
         list.innerHTML = html; updatePricesOnly();
     }
-
-            filtered.forEach(s => {
-                let subSrc = [...(coinSources[s]||[])];
-                html += `<div class="coin-row"><div class="coin-card" onclick="toggleDetail('${s}')" onmousedown="startHold(event,'${s}','coin')" onmousemove="moveHold(event)" onmouseup="clearHold()" ontouchstart="startHold(event,'${s}','coin')" ontouchmove="moveHold(event)" ontouchend="clearHold()"><div class="logo-wrapper"><img src="any" onerror="handleLogoError(this, '${s}')"></div><div class="info-group"><span class="symbol">${s}</span><span id="change-coin-${s}" class="change-pct">-</span><br><span id="price-coin-${s}" style="font-size:10px; color:var(--subtext)">-</span></div><div style="text-align:right; margin-right:10px;"><span style="font-weight:bold; font-size:13px;">${getCoinTotal(s).toLocaleString()}</span><br><span id="val-coin-${s}" style="font-size:9px; color:var(--subtext)">-</span></div></div><div id="det-${s}" class="details" style="display:${expandedItem === s ? 'block' : 'none'}">${subSrc.map(src => {
-                    const d = (balances[s] && balances[s][src]) ? balances[s][src] : {amount:'', staking:''};
-                    return `<div class="source-row"><span class="source-label" style="padding-left:4px">${src}</span><div class="input-wrapper"><input type="number" class="source-input" inputmode="decimal" value="${d.amount||''}" oninput="updateBal('${s}','${src}','amount',this.value)" placeholder="Amount"><input type="number" class="source-input" inputmode="decimal" value="${d.staking||''}" oninput="updateBal('${s}','${src}','staking',this.value)" placeholder="Stake"></div><span class="del-src" onclick="confirmModal('Hapus ${src}?','delete',()=>removeSource('${s}','${src}'))">×</span></div>`;
-                }).join('')}<div class="new-source-box"><input type="text" id="new-src-input-${s}" class="new-source-input" placeholder="Source Baru..." onkeypress="if(event.key==='Enter') addCustomSource('${s}')"><button class="new-source-btn" onclick="addCustomSource('${s}')">+</button></div></div></div>`;
-            });
-        }
-        list.innerHTML = html; updatePricesOnly();
-    }
-
     // --- UTILS ---
     function saveAll() { localStorage.setItem('my_assets_v2', JSON.stringify(watchlist)); localStorage.setItem('my_balances_v2', JSON.stringify(balances)); localStorage.setItem('my_coin_sources', JSON.stringify(coinSources)); localStorage.setItem('my_exchanges_v2', JSON.stringify(allExchanges)); }
     function updateBal(s, src, type, v) { if(!balances[s]) balances[s]={}; if(!balances[s][src] || typeof balances[s][src] !== 'object') balances[s][src] = {amount:0, staking:''}; balances[s][src][type] = v; saveAll(); updatePricesOnly(); }
