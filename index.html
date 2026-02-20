@@ -255,17 +255,11 @@
 
     // --- LOGO HIERARCHY (FITUR BARU) ---
     function handleLogoError(img, sym) {
-    // Khusus buat Rupiah biar warnanya beda sendiri
-    if (sym === 'IDR') {
-        img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">RP</div>`;
-        return;
-    }
-
     const retry = parseInt(img.getAttribute('data-retry') || "0");
     const s = sym.toLowerCase();
     const S = sym.toUpperCase();
 
-    // Hierarki pengambilan ikon (Pokonya diurutin dari yang paling lengkap databasenya)
+    // Daftar sumber (Urutan 0 adalah KuCoin yang elu mau)
     const sources = [
         `https://www.kucoin.com/_next/image?url=https://assets.static-up.com/cms/media/3v4isL7YV6S60nu9h6Tf8oO7XW6703O1656515856755/${S}.png&w=64&q=75`,
         `https://gate.io/images/coin_icon/64/${s}.png`,
@@ -275,9 +269,9 @@
 
     if (retry < sources.length) {
         img.setAttribute('data-retry', retry + 1);
-        img.src = sources[retry]; // Coba sumber berikutnya
+        img.src = sources[retry]; // Langsung tembak sumber sesuai urutan
     } else {
-        // Kalau semua gagal, tampilin 2 huruf pertama aja
+        // Kalau mentok gak ada semua, baru balik ke inisial teks
         img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2).toUpperCase()}</div>`;
     }
 }
