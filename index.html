@@ -255,27 +255,32 @@
 
     // --- LOGO HIERARCHY (FITUR BARU) ---
     function handleLogoError(img, sym) {
-        if (sym === 'IDR') {
-            img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">RP</div>`;
-            return;
-        }
-        const retry = parseInt(img.getAttribute('data-retry') || "0");
-        const s = sym.toLowerCase();
-        const S = sym.toUpperCase();
-
-        // Urutan pintu sesuai request
-     const sources = [
-            `https://gate.io/images/coin_icon/64/${s}.png`,
-            `https://assets.coincap.io/assets/icons/${s}@2x.png`,
-            `https://static.okx.com/cdn/oksupport/asset/currency/icon/${s}.png`
-        ];
-        if (retry < sources.length) {
-            img.setAttribute('data-retry', retry + 1);
-            img.src = sources[retry];
-        } else {
-            img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2).toUpperCase()}</div>`;
-        }
+    // Khusus buat Rupiah biar warnanya beda sendiri
+    if (sym === 'IDR') {
+        img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">RP</div>`;
+        return;
     }
+
+    const retry = parseInt(img.getAttribute('data-retry') || "0");
+    const s = sym.toLowerCase();
+    const S = sym.toUpperCase();
+
+    // Hierarki pengambilan ikon (Pokonya diurutin dari yang paling lengkap databasenya)
+    const sources = [
+        `https://www.kucoin.com/_next/image?url=https://assets.static-up.com/cms/media/3v4isL7YV6S60nu9h6Tf8oO7XW6703O1656515856755/${S}.png&w=64&q=75`,
+        `https://gate.io/images/coin_icon/64/${s}.png`,
+        `https://assets.coincap.io/assets/icons/${s}@2x.png`,
+        `https://static.okx.com/cdn/oksupport/asset/currency/icon/${s}.png`
+    ];
+
+    if (retry < sources.length) {
+        img.setAttribute('data-retry', retry + 1);
+        img.src = sources[retry]; // Coba sumber berikutnya
+    } else {
+        // Kalau semua gagal, tampilin 2 huruf pertama aja
+        img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2).toUpperCase()}</div>`;
+    }
+}
 
     // --- DATA & STATE ---
     let usdToIdr = 16000;
