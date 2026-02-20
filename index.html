@@ -254,26 +254,44 @@
     }, { passive: true });
 
     // --- LOGO HIERARCHY (FITUR BARU) ---
+    // --- LOGO HIERARCHY (VERSI ANTI-ERROR) ---
     function handleLogoError(img, sym) {
         if (sym === 'IDR') {
             img.parentElement.innerHTML = `<div class="logo-initial" style="background:#4ade80; color:#0f172a">RP</div>`;
             return;
         }
-        const retry = parseInt(img.getAttribute('data-retry') || "0");
-        const s = sym.toLowerCase();
-        const S = sym.toUpperCase();
 
-        // Urutan pintu sesuai request
-     const sources = [
+        // Ambil urutan percobaan (retry)
+        let retry = parseInt(img.getAttribute('data-retry') || "0");
+        const S = sym.toUpperCase();
+        const s = sym.toLowerCase();
+
+        // Daftar jalur cadangan (semakin ke bawah semakin buat cadangan)
+        const sources = [
+            // 1. Link KuCoin Utama (dari file index 6 lu)
             `https://www.kucoin.com/_next/image?url=https://assets.static-up.com/cms/media/3v4isL7YV6S60nu9h6Tf8oO7XW6703O1656515856755/${S}.png&w=64&q=75`
-           //`https://gate.io/images/coin_icon/64/${s}.png`,
-           // `https://assets.coincap.io/assets/icons/${s}@2x.png`,
-            `https://static.okx.com/cdn/oksupport/asset/currency/icon/${s}.png`
+            
+            // 2. Jalur Tikus KuCoin (Cadangan di index 6)
+          //  `https://icon.staticimgs.com/images/coin_icon/64/${s}.png`,
+            
+            // 3. Binance (Paling jarang mati)
+           // `https://bin.bnbstatic.com/static/assets/logos/${S}.png`,
+            
+            // 4. Bybit
+           // `https://s1.bybit.com/v3/assets/token/${S}.png`
         ];
+
         if (retry < sources.length) {
-            img.setAttribute('data-retry', retry + 1);
+            // Pasang link cadangan sesuai urutan
             img.src = sources[retry];
+            
+            // Naikin angka retry buat percobaan berikutnya
+            img.setAttribute('data-retry', retry + 1);
+            
+            // Tambahin ini biar gak diblokir server (Referrer Policy)
+            img.setAttribute('referrerpolicy', 'no-referrer');
         } else {
+            // Kalau semua cara gagal, baru munculin inisial huruf
             img.parentElement.innerHTML = `<div class="logo-initial">${sym.substring(0, 2).toUpperCase()}</div>`;
         }
     }
